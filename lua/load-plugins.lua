@@ -14,7 +14,21 @@ require('lazy').setup({
     }, -- Telescope
     {
         'nvim-telescope/telescope.nvim',
-        dependencies = {'nvim-lua/popup.nvim', 'nvim-lua/plenary.nvim'},
+        dependencies = {
+            'nvim-lua/popup.nvim',
+            'nvim-lua/plenary.nvim',
+            'nvim-telescope/telescope.nvim',
+            'nvim-telescope/telescope-fzf-native.nvim', -- FZF sorter for Telescope
+            'nvim-treesitter/nvim-treesitter', -- Treesitter for better syntax highlighting and code navigation
+            'nvim-treesitter/playground', -- Treesitter playground for querying syntax trees
+            'neovim/nvim-lspconfig', -- LSP configurations
+            'hrsh7th/nvim-cmp', -- Autocompletion plugin
+            'hrsh7th/cmp-nvim-lsp', -- LSP source for nvim-cmp
+            'L3MON4D3/LuaSnip', -- Snippets plugin
+            'saadparwaiz1/cmp_luasnip', -- Snippets source for nvim-cmp
+            'junegunn/fzf', -- FZF for fuzzy finding
+            'junegunn/fzf.vim', -- FZF integration with Vim
+        },
         config = function() require('setup-plugins.telescope') end
     }, -- Telescope plugins
     {
@@ -55,7 +69,7 @@ require('lazy').setup({
     {'tpope/vim-repeat'},
     {'tpope/vim-surround'},
     {'tpope/vim-sleuth'},
-    {'sbdchd/neoformat'},
+    {'mhartington/formatter.nvim'},
     {'Pocco81/HighStr.nvim'},
     {'iamcco/markdown-preview.nvim', build = function() vim.fn['mkdp#util#install']() end },
     -- search & replace

@@ -19,7 +19,7 @@ keymap('x', '<', "<gv", { noremap = true, silent = true })
 keymap('x', '>', ">gv", { noremap = true, silent = true })
 
 -- format
-keymap('n', '<leader>fmt', ':Neoformat<CR>', { silent = true })
+keymap('n', '<leader>fmt', ':Format<CR>', { silent = true })
 
 -- LSP
 keymap("n", "<leader>rn", "<cmd>Lspsaga rename<CR>", { silent = true })

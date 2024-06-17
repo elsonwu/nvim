@@ -1,41 +1,96 @@
+local actions = require('telescope.actions');
+
 require('telescope').setup({
     file_ignore_patterns = {'node_modules', '.git'},
-    pickers = {
-        live_grep = {additional_args = function(opts) return {"--hidden"} end}
-    },
+    -- pickers = {
+    --     live_grep = {additional_args = function(opts) return {"--hidden"} end}
+    -- },
+    -- defaults = {
+    --     initial_mode = 'insert',
+    --     path_display = {'absolute'},
+    --     wrap_results = true,
+    --     layout_strategy = 'vertical',
+    --     layout_config = {height = 0.95, width = 0.95},
+    --     default_mappings = false,
+    --     mappings = {
+    --         i = {["<C-j>"] = require('telescope.actions').move_selection_next}
+    --     }
+    -- },
     defaults = {
-        initial_mode = 'insert',
-        path_display = {'absolute'},
-        wrap_results = true,
-        layout_strategy = 'vertical',
-        layout_config = {height = 0.95, width = 0.95},
-        default_mappings = false,
-        mappings = {
-            i = {["<C-j>"] = require('telescope.actions').move_selection_next}
-        }
+      layout_config = {height = 0.95, width = 0.95},
+      layout_strategy = 'vertical',
+      vimgrep_arguments = {
+        'rg',
+        '--color=never',
+        '--no-heading',
+        '--with-filename',
+        '--line-number',
+        '--column',
+        '--smart-case'
+      },
+      prompt_prefix = "> ",
+      selection_caret = "> ",
+      path_display = {"smart"},
+      mappings = {
+        i = {
+          ["<esc>"] = actions.close,
+          ["<C-j>"] = actions.move_selection_next,
+          ["<C-k>"] = actions.move_selection_previous,
+          ["<CR>"] = actions.select_default,
+        },
+      },
+      file_ignore_patterns = {"node_modules", "%.git/", "%.cache/"},
+    },
+    pickers = {
+      find_files = {
+        theme = "dropdown",
+      },
+      git_files = {
+        theme = "dropdown",
+      },
+      live_grep = {
+        theme = "dropdown",
+      },
+      buffers = {
+        theme = "dropdown",
+      },
+      help_tags = {
+        theme = "dropdown",
+      },
     },
     extensions = {
-        -- fzf = {
-        --     fuzzy = true, -- false will only do exact matching
-        --     override_generic_sorter = true, -- override the generic sorter
-        --     override_file_sorter = true, -- override the file sorter
-        --     case_mode = "smart_case" -- or "ignore_case" or "respect_case"
-        -- }
-        -- project = {
-        --   base_dirs = {
-        --     '~/www',
-        --   },
-        --   theme = "dropdown",
-        --   order_by = "asc",
-        --   search_by = "title",
-        --   sync_with_nvim_tree = true, -- default false
-        -- }
-    }
+      fzf = {
+        fuzzy = true,                    -- false will only do exact matching
+        override_generic_sorter = true,  -- override the generic sorter
+        override_file_sorter = true,     -- override the file sorter
+        case_mode = "smart_case",        -- or "ignore_case" or "respect_case"
+      },
+    },
+    -- defaults = {
+    --     initial_mode = 'insert',
+    --     path_display = {'absolute'},
+    --     wrap_results = true,
+    --     layout_strategy = 'vertical',
+    --     layout_config = {height = 0.95, width = 0.95},
+    --     default_mappings = false,
+    --     mappings = {
+    --         i = {["<C-j>"] = require('telescope.actions').move_selection_next}
+    --     }
+    -- },
+    -- extensions = { }
 })
 
 -- require('telescope').load_extension('fzf')
 -- require('telescope').load_extension('project')
 -- require('telescope').load_extension('dap')
+
+-- Function to search node_modules
+function SearchNodeModules()
+  require('telescope.builtin').find_files({
+    prompt_title = "< Search node_modules >",
+    cwd = vim.fn.getcwd() .. '/node_modules',
+  })
+end
 
 local keymap = vim.keymap.set
 -- search + LSP
@@ -45,18 +100,18 @@ keymap('n', '<leader>sf',
 keymap('n', '<leader>ss', builtin.live_grep, {})
 keymap('n', '<leader>sw', builtin.grep_string, {})
 keymap('n', '<leader>sb', builtin.buffers, {})
-keymap('n', '<leader>sm', builtin.marks, {})
+-- keymap('n', '<leader>sm', builtin.marks, {})
 -- search and replace current word
-keymap('n', '<leader>sr',
-       ":lua require('spectre').open_visual({select_word=true})<CR>", {})
+keymap('n', '<leader>sr', ":lua require('spectre').open_visual({select_word=true})<CR>", {})
 
 keymap('n', 'gd', builtin.lsp_definitions, {silent = true})
 keymap("n", "<leader>gk", "<cmd>Lspsaga peek_definition<CR>", {silent = true})
 keymap('n', '<leader>gt', builtin.lsp_type_definitions, {silent = true})
 keymap("n", "<leader>gr", "<cmd>Lspsaga finder<CR>", {silent = true})
 keymap('n', '<leader>gi', builtin.lsp_implementations, {silent = true})
-keymap("n", "<leader>gE", "<cmd>Lspsaga show_buf_diagnostics<CR>",
-       {silent = true})
-keymap("n", "<leader>ge", "<cmd>Lspsaga show_cursor_diagnostics<CR>",
-       {silent = true})
+keymap("n", "<leader>gE", "<cmd>Lspsaga show_buf_diagnostics<CR>", {silent = true})
+keymap("n", "<leader>ge", "<cmd>Lspsaga show_cursor_diagnostics<CR>", {silent = true})
+
+-- Map the function to a command or keybinding
+keymap('n', '<leader>sm', '<cmd>lua SearchNodeModules()<CR>', { noremap = true, silent = true })
 
