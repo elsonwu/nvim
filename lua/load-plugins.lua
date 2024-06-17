@@ -36,7 +36,7 @@ require('lazy').setup({
         priority = 100,
         -- lazy = true,
         -- event = "UIEnter",
-        version = 'nightly',
+        -- version = 'nightly',
         config = function() require('setup-plugins.nvim-tree') end
     }, {
         'nvim-lualine/lualine.nvim',
@@ -44,14 +44,8 @@ require('lazy').setup({
         event = "UIEnter",
         dependencies = {'nvim-tree/nvim-web-devicons'},
         config = function() require('setup-plugins.lualine') end
-    }, {
-        'akinsho/bufferline.nvim',
-        lazy = true,
-        event = "UIEnter",
-        version = 'v3.*',
-        dependencies = 'nvim-tree/nvim-web-devicons',
-        config = function() require('setup-plugins.bufferline') end
-    }, -- Git related
+    }, 
+    {'akinsho/bufferline.nvim', version = "*", dependencies = 'nvim-tree/nvim-web-devicons'},
     {'lewis6991/gitsigns.nvim', lazy = true, event = 'UIEnter', config = true},
     {
         'akinsho/git-conflict.nvim',
