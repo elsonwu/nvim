@@ -9,7 +9,7 @@ require("lazy").setup({
 		-- colorscheme
 		{ "dracula/vim", event = "UIEnter", name = "dracula" }, -- Treesitter
 		{ "github/copilot.vim", event = "UIEnter" },
-		{ "j-hui/fidget.nvim", lazy = false, opts = {} },
+		{ "j-hui/fidget.nvim", priority=1, lazy = false, opts = {} },
 		{ "akinsho/toggleterm.nvim", version = "*", config = true },
 		-- search & replace
 		{ "windwp/nvim-spectre", config = true },
