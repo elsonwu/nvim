@@ -22,6 +22,10 @@ vim.opt.updatetime = 300
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
+-- Copilet
+vim.g.copilot_node_command = "/Users/weijwu/.local/state/fnm_multishells/61521_1719415034696/bin/node"
+vim.g.copilot_no_tab_map = true
+
 -- better diagnostic sign
 local signs = { Error = "🚨", Warn = "⚠️ ", Hint = "💡", Info = "⚡" }
 for type, icon in pairs(signs) do

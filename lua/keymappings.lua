@@ -60,3 +60,6 @@ keymap("n", "<leader>hr", ":HSRmHighlight rm_all<CR>", { noremap = true, silent 
 
 -- Terminal
 keymap("n", "<leader>tt", ":ToggleTerm<CR>", { noremap = true, silent = true })
+
+-- Copilet
+keymap('i', '<C-J>', 'copilot#Accept("\\<CR>")', { expr = true, replace_keycodes = false })
