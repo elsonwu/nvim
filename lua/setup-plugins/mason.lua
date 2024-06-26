@@ -1,8 +1,7 @@
 -- Plugins setup
 require("mason").setup({
-  providers = {
-    "mason.providers.client",
-    "mason.providers.registry-api",
-  }
+	providers = {
+		"mason.providers.client",
+		"mason.providers.registry-api",
+	},
 })
-

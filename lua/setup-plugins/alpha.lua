@@ -1,7 +1,7 @@
 local startify = require("alpha.themes.startify")
 
 startify.section.top_buttons.val = {
-	startify.button( "i", "  New file" , ":ene <BAR> startinsert <CR>"),
+	startify.button("i", "  New file", ":ene <BAR> startinsert <CR>"),
 	startify.file_button("~/www/", "w"),
 	startify.file_button("~/.config/nvim/", "n"),
 	startify.file_button("~/.config/fish/", "f"),
