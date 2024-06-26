@@ -22,9 +22,9 @@ keymap('x', '>', ">gv", { noremap = true, silent = true })
 keymap('n', '<leader>fmt', ':Format<CR>', { silent = true })
 
 -- LSP
-keymap("n", "<leader>rn", "<cmd>Lspsaga rename<CR>", { silent = true })
-keymap("n", "<leader>h", "<cmd>Lspsaga hover_doc<CR>", { silent = true })
-keymap({"n","v"}, "<leader>ga", "<cmd>Lspsaga code_action<CR>", { silent = true })
+keymap("n", '<leader>rn', '<cmd>Lspsaga rename<CR>', { silent = true })
+keymap("n", '<leader>h', '<cmd>Lspsaga hover_doc<CR>', { silent = true })
+keymap({"n","v"}, '<leader>ga', '<cmd>Lspsaga code_action<CR>', { silent = true })
 
 -- switch project
 keymap('n', '<leader>lw', ":lua require'telescope'.extensions.project.project{}<CR>", {noremap = true, silent = true})
