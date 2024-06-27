@@ -98,7 +98,7 @@ end
 
 require("nvim-tree").setup({
 	on_attach = on_attach,
-	sort_by = "case_sensitive",
+	-- sort_by = "case_sensitive",
 	respect_buf_cwd = true,
 	disable_netrw = true,
 	hijack_cursor = true,
@@ -107,7 +107,7 @@ require("nvim-tree").setup({
 		-- mappings = {list = {{key = "u", action = "dir_up"}}}
 	},
 	renderer = {
-		group_empty = true,
+		group_empty = false,
 		indent_markers = {
 			enable = true,
 			inline_arrows = true,
@@ -121,7 +121,12 @@ require("nvim-tree").setup({
 		},
 	},
 	git = {
-		ignore = false,
+		ignore = true,
+	},
+	filesystem_watchers = {
+		ignore_dirs = {
+			"node_modules",
+		},
 	},
 	filters = { dotfiles = false },
 })
