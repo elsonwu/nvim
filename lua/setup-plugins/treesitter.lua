@@ -1,12 +1,12 @@
 require("nvim-treesitter.configs").setup({
-	-- ensure_installed = 'all',
-	sync_install = false,
-	-- auto_install = true,
+	ensure_installed = "all",
+	auto_install = true,
 	autotag = { enable = true },
 	indent = {
 		enable = true,
-		disable = { "yaml" },
+		-- disable = { "yaml" },
 	},
+	sync_install = false,
 	highlight = {
 		enable = true,
 		additional_vim_regex_highlighting = false,
