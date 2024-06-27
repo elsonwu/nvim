@@ -21,7 +21,6 @@ require("lazy").setup({
 				require("setup-plugins.treesitter")
 			end,
 		},
-
 		{
 			"nvim-treesitter/nvim-treesitter-textobjects",
 			dependencies = { "nvim-treesitter/nvim-treesitter" },
@@ -99,6 +98,20 @@ require("lazy").setup({
 		}, -- utils
 		{ "Raimondi/delimitMate" },
 		{ "tpope/vim-commentary" },
+		{
+			"folke/which-key.nvim",
+			lazy = true,
+			event = "VeryLazy",
+			init = function()
+				vim.o.timeout = true
+				vim.o.timeoutlen = 300
+			end,
+			opts = {
+				-- your configuration comes here
+				-- or leave it empty to use the default settings
+				-- refer to the configuration section below
+			},
+		},
 		{ "djoshea/vim-autoread", event = "BufRead" },
 		{
 			"gelguy/wilder.nvim",
