@@ -34,13 +34,41 @@ keymap(
 )
 
 -- LSP
+keymap("n", "gd", ':lua require"telescope.builtin".lsp_definitions()<CR>', { noremap = true, silent = true })
 keymap("n", "<leader>rn", "<cmd>Lspsaga rename<CR>", { noremap = true, silent = true })
 keymap("n", "<leader>h", "<cmd>Lspsaga peek_definition<CR>", { noremap = true, silent = true })
 keymap("n", "<leader>T", "<cmd>Lspsaga peek_type_definition<CR>", { noremap = true, silent = true })
-keymap({ "n", "v" }, "<leader>ga", "<cmd>Lspsaga code_action<CR>", { noremap = true, silent = true })
-
--- switch project
-keymap("n", "<leader>lw", ":lua require'telescope'.extensions.project.project{}<CR>", { noremap = true, silent = true })
+keymap("n", "<leader>gk", "<cmd>Lspsaga peek_definition<CR>", { noremap = true, silent = true })
+keymap("n", "<leader>gr", "<cmd>Lspsaga finder<CR>", { noremap = true, silent = true })
+keymap("n", "<leader>gE", "<cmd>Lspsaga show_buf_diagnostics<CR>", { noremap = true, silent = true })
+keymap("n", "<leader>ge", "<cmd>Lspsaga show_cursor_diagnostics<CR>", { noremap = true, silent = true })
+keymap("n", "<leader>sn", ":Telescope node_modules list<CR>", { noremap = true, silent = true })
+keymap("n", "<leader>ss", ':lua require("telescope.builtin").live_grep()<CR>', { noremap = true, silent = true })
+keymap("n", "<leader>sb", ':lua require"telescope.builtin".buffers()<CR>', { noremap = true, silent = true })
+keymap(
+	"n",
+	"<leader>sf",
+	":Telescope find_files find_command=rg,--smart-case,--ignore,--hidden,--files<CR>",
+	{ noremap = true, silent = true }
+)
+keymap(
+	"n",
+	"<leader>sw",
+	':lua require("telescope.builtin").grep_string({ search = vim.fn.expand("<cword>") })<CR>',
+	{ noremap = true, silent = true }
+)
+keymap(
+	"n",
+	"<leader>gi",
+	':lua require"telescope.builtin".lsp_implementations()<CR>',
+	{ noremap = true, silent = true }
+)
+keymap(
+	"n",
+	"<leader>gt",
+	':lua require"telescope.builtin".lsp_type_definitions()<CR>',
+	{ noremap = true, silent = true }
+)
 
 -- Diagnostic jump can use `<c-o>` to jump back
 keymap("n", "[e", "<cmd>Lspsaga diagnostic_jump_prev<CR>", { noremap = true, silent = true })
@@ -58,12 +86,6 @@ keymap("n", "<leader>dl", ":lua require'dap'.run_last()<CR>", { noremap = true, 
 
 -- Git
 keymap("n", "<leader>bb", ":Gitsigns blame_line<CR>", { noremap = true, silent = true })
-keymap("n", "]x", "<Plug>(git-conflict-prev-conflict)")
-keymap("n", "[x", "<Plug>(git-conflict-next-conflict)")
-
--- Highlight selected
-keymap("v", "<leader>hl", ":<c-u>HSHighlight<CR>", { noremap = true, silent = true })
-keymap("n", "<leader>hr", ":HSRmHighlight rm_all<CR>", { noremap = true, silent = true })
 
 -- Terminal
 keymap("n", "<leader>tt", ":ToggleTerm<CR>", { noremap = true, silent = true })
