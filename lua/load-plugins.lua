@@ -2,20 +2,17 @@
 -- Plugins
 ---
 require("lazy").setup({
-	defaults = {
-		lazy = false,
-	},
 	spec = {
 		-- colorscheme
-		{ "dracula/vim", event = "UIEnter", name = "dracula" }, -- Treesitter
-		{ "github/copilot.vim", event = "UIEnter" },
-		{ "j-hui/fidget.nvim", priority = 1, lazy = false, opts = {} },
-		{ "akinsho/toggleterm.nvim", version = "*", config = true },
+		{ "dracula/vim", lazy = false, name = "dracula" }, -- Treesitter
+		{ "github/copilot.vim", event = "VeryLazy" },
+		{ "j-hui/fidget.nvim", event = "BufEnter", lazy = true, opts = {} },
+		{ "akinsho/toggleterm.nvim", event = "VeryLazy", version = "*", config = true },
 		-- search & replace
-		{ "windwp/nvim-spectre", config = true },
+		{ "windwp/nvim-spectre", event = "VeryLazy", config = true },
 		{
 			"nvim-treesitter/nvim-treesitter",
-			event = "BufReadPost",
+			event = "VeryLazy",
 			build = ":TSUpdate",
 			config = function()
 				require("setup-plugins.treesitter")
@@ -23,28 +20,28 @@ require("lazy").setup({
 		},
 		{
 			"nvim-treesitter/nvim-treesitter-textobjects",
+			event = "VeryLazy",
 			dependencies = { "nvim-treesitter/nvim-treesitter" },
 		}, -- Telescope
 		{
 			"nvim-telescope/telescope.nvim",
-			lazy = true,
-			event = "UIEnter",
+			event = "VeryLazy",
 			dependencies = {
 				"nvim-lua/popup.nvim",
 				"nvim-lua/plenary.nvim",
 				"nvim-telescope/telescope.nvim",
 				-- "nvim-telescope/telescope-fzf-native.nvim", -- FZF sorter for Telescope
 				"nvim-treesitter/nvim-treesitter", -- Treesitter for better syntax highlighting and code navigation
-				"nvim-treesitter/playground", -- Treesitter playground for querying syntax trees
+				-- "nvim-treesitter/playground", -- Treesitter playground for querying syntax trees
 				"neovim/nvim-lspconfig", -- LSP configurations
 				"hrsh7th/nvim-cmp", -- Autocompletion plugin
 				"hrsh7th/cmp-nvim-lsp", -- LSP source for nvim-cmp
-				"L3MON4D3/LuaSnip", -- Snippets plugin
+				-- "L3MON4D3/LuaSnip", -- Snippets plugin
 				-- 'saadparwaiz1/cmp_luasnip', -- Snippets source for nvim-cmp
-				"junegunn/fzf", -- FZF for fuzzy finding
-				"junegunn/fzf.vim", -- FZF integration with Vim
+				-- "junegunn/fzf", -- FZF for fuzzy finding
+				-- "junegunn/fzf.vim", -- FZF integration with Vim
 				"nvim-telescope/telescope-node-modules.nvim",
-				"Snikimonkd/telescope-git-conflicts.nvim",
+				-- "Snikimonkd/telescope-git-conflicts.nvim",
 				-- 'HUAHUAI23/telescope-dapzzzz',
 				-- 'LukasPietzschmann/telescope-tabs',
 				-- 'piersolenski/telescope-import.nvim',
@@ -53,16 +50,10 @@ require("lazy").setup({
 				require("setup-plugins.telescope")
 			end,
 		}, -- Telescope plugins
-		-- {
-		--     'nvim-telescope/telescope-fzf-native.nvim',
-		--     build = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build',
-		--     dependencies = {'nvim-telescope/telescope.nvim'}
-		-- }, -- File exporer
 		{
 			"nvim-tree/nvim-tree.lua",
 			cmd = "NvimTreeToggle",
-			event = "VimEnter",
-			lazy = false,
+			event = "UIEnter",
 			dependencies = { "nvim-tree/nvim-web-devicons" },
 			config = function()
 				require("setup-plugins.nvim-tree")
@@ -70,22 +61,19 @@ require("lazy").setup({
 		},
 		{
 			"nvim-lualine/lualine.nvim",
-			lazy = true,
-			event = "UIEnter",
-			-- event = 'VimEnter',
+			event = "VeryLazy",
 			dependencies = { "nvim-tree/nvim-web-devicons", opt = true },
 			config = function()
 				require("setup-plugins.lualine")
 			end,
 		},
-		{ "akinsho/bufferline.nvim", version = "*", dependencies = "nvim-tree/nvim-web-devicons" },
+		{ "akinsho/bufferline.nvim", event = "VeryLazy", version = "*", dependencies = "nvim-tree/nvim-web-devicons" },
 		-- git
-		{ "aspeddro/gitui.nvim", config = true },
-		{ "lewis6991/gitsigns.nvim", config = true },
+		{ "aspeddro/gitui.nvim", event = "VeryLazy", config = true },
+		{ "lewis6991/gitsigns.nvim", event = "VeryLazy", config = true },
 		{
 			"akinsho/git-conflict.nvim",
 			version = "*",
-			lazy = true,
 			opt = {
 				{
 					default_mappings = false, -- disable buffer local mapping created by this plugin
@@ -96,43 +84,41 @@ require("lazy").setup({
 			ft = { "gitcommit", "gitrebase", "gitconfig" },
 			config = true,
 		}, -- utils
-		{ "Raimondi/delimitMate" },
-		{ "tpope/vim-commentary" },
+		{ "Raimondi/delimitMate", event = "VeryLazy" },
+		{ "tpope/vim-commentary", event = "VeryLazy" },
 		{
 			"folke/which-key.nvim",
-			lazy = true,
 			event = "VeryLazy",
-			init = function()
-				vim.o.timeout = true
-				vim.o.timeoutlen = 300
+			config = function()
+				require("which-key").setup({
+					triggers = "",
+				})
 			end,
-			opts = {
-				-- your configuration comes here
-				-- or leave it empty to use the default settings
-				-- refer to the configuration section below
-			},
 		},
-		{ "djoshea/vim-autoread", event = "BufRead" },
+		{ "djoshea/vim-autoread", event = "VeryLazy" },
 		{
 			"gelguy/wilder.nvim",
+			event = "VeryLazy",
 			config = function()
 				require("setup-plugins.wilder")
 			end,
 		},
-		{ "jparise/vim-graphql" },
-		{ "qpkorr/vim-bufkill" },
+		{ "jparise/vim-graphql", event = "VeryLazy" },
+		{ "qpkorr/vim-bufkill", event = "VeryLazy" },
 		{
 			"ggandor/leap.nvim",
+			event = "VeryLazy",
 			config = function()
 				require("setup-plugins.leap")
 			end,
 		},
-		{ "tpope/vim-repeat" },
-		{ "tpope/vim-surround" },
-		{ "tpope/vim-sleuth" },
+		{ "tpope/vim-repeat", event = "VeryLazy" },
+		{ "tpope/vim-surround", event = "VeryLazy" },
+		{ "tpope/vim-sleuth", event = "VeryLazy" },
 		-- formatter
 		{
 			"stevearc/conform.nvim",
+			event = "VeryLazy",
 			opts = {},
 			config = function()
 				require("setup-plugins.conform")
@@ -150,6 +136,7 @@ require("lazy").setup({
 		{ "windwp/nvim-autopairs", event = "InsertEnter", config = true },
 		{
 			"goolord/alpha-nvim",
+			event = "BufEnter",
 			dependencies = { "nvim-tree/nvim-web-devicons" },
 			config = function()
 				require("setup-plugins.alpha")
@@ -157,15 +144,13 @@ require("lazy").setup({
 		}, -- vscode-like icons in completion
 		{
 			"onsails/lspkind.nvim",
-			lazy = true,
-			event = "UIEnter",
+			event = "VeryLazy",
 			config = function()
 				require("setup-plugins.lspkind")
 			end,
 		}, -- LSP Autocompletion
 		{
 			"hrsh7th/nvim-cmp",
-			lazy = true,
 			event = "InsertEnter",
 			dependencies = {
 				-- 'hrsh7th/cmp-cmdline', -- command line
@@ -178,10 +163,11 @@ require("lazy").setup({
 				require("setup-plugins.cmp")
 			end,
 		}, -- Better rust support
-		{ "simrat39/rust-tools.nvim", dependencies = { "neovim/nvim-lspconfig" } }, -- LSP Support
-		{ "neovim/nvim-lspconfig" },
+		{ "simrat39/rust-tools.nvim", ft = "rust", dependencies = { "neovim/nvim-lspconfig" } }, -- LSP Support
+		{ "neovim/nvim-lspconfig", event = "VeryLazy" },
 		{
 			"williamboman/mason.nvim",
+			event = "VeryLazy",
 			build = ":MasonUpdate",
 			config = function()
 				require("setup-plugins.mason")
@@ -189,6 +175,7 @@ require("lazy").setup({
 		},
 		{
 			"williamboman/mason-lspconfig.nvim",
+			event = "VeryLazy",
 			dependencies = { "williamboman/mason.nvim" },
 			config = function()
 				require("setup-plugins.mason-lspconfig")
@@ -197,9 +184,8 @@ require("lazy").setup({
 		{ "b0o/schemastore.nvim" },
 		{
 			"glepnir/lspsaga.nvim",
-			lazy = true,
-			event = "UIEnter",
 			branch = "main",
+			event = "VeryLazy",
 			dependencies = {
 				{ "williamboman/mason-lspconfig.nvim", "neovim/nvim-lspconfig" },
 			},

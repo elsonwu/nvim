@@ -22,31 +22,11 @@ vim.opt.updatetime = 300
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
-local function get_node_path()
-    -- Attempt to find the Node.js binary in the system's PATH
-    local handle = io.popen("which node")
-    if handle == nil then
-        vim.notify("Failed to run which command. Please ensure it is installed and in your PATH.", vim.log.levels.ERROR)
-        return nil
-    end
-
-    local result = handle:read("*a")
-    handle:close()
-
-    -- Trim any whitespace from the result
-    local node_path = result:gsub("%s+", "")
-
-    -- If the path is empty, fall back to a default or error out
-    if node_path == "" then
-        vim.notify("Node.js not found in PATH. Please install Node.js or set the path manually.", vim.log.levels.ERROR)
-        return nil
-    end
-
-    return node_path
-end
+-- command reload config
+vim.api.nvim_create_user_command("ReloadConfig", "source $MYVIMRC", {})
 
 -- Copilet
-vim.g.copilot_node_command = get_node_path()
+vim.g.copilot_node_command = "~/.local/share/fnm/aliases/default/bin/node"
 vim.g.copilot_no_tab_map = true
 
 -- better diagnostic sign

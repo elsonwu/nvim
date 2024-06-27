@@ -67,7 +67,7 @@ require("telescope").setup({
 })
 
 require("telescope").load_extension("node_modules")
-require("telescope").load_extension("conflicts")
+-- require("telescope").load_extension("conflicts")
 -- require('telescope').load_extension('telescope-tabs')
 -- require("telescope").load_extension("i23")
 -- require("telescope").load_extension("import")
