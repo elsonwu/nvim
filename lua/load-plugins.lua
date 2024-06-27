@@ -9,7 +9,7 @@ require("lazy").setup({
 		-- colorscheme
 		{ "dracula/vim", event = "UIEnter", name = "dracula" }, -- Treesitter
 		{ "github/copilot.vim", event = "UIEnter" },
-		{ "j-hui/fidget.nvim", priority=1, lazy = false, opts = {} },
+		{ "j-hui/fidget.nvim", priority = 1, lazy = false, opts = {} },
 		{ "akinsho/toggleterm.nvim", version = "*", config = true },
 		-- search & replace
 		{ "windwp/nvim-spectre", config = true },
@@ -21,6 +21,7 @@ require("lazy").setup({
 				require("setup-plugins.treesitter")
 			end,
 		},
+
 		{
 			"nvim-treesitter/nvim-treesitter-textobjects",
 			dependencies = { "nvim-treesitter/nvim-treesitter" },
@@ -33,7 +34,7 @@ require("lazy").setup({
 				"nvim-lua/popup.nvim",
 				"nvim-lua/plenary.nvim",
 				"nvim-telescope/telescope.nvim",
-				"nvim-telescope/telescope-fzf-native.nvim", -- FZF sorter for Telescope
+				-- "nvim-telescope/telescope-fzf-native.nvim", -- FZF sorter for Telescope
 				"nvim-treesitter/nvim-treesitter", -- Treesitter for better syntax highlighting and code navigation
 				"nvim-treesitter/playground", -- Treesitter playground for querying syntax trees
 				"neovim/nvim-lspconfig", -- LSP configurations
@@ -79,6 +80,8 @@ require("lazy").setup({
 			end,
 		},
 		{ "akinsho/bufferline.nvim", version = "*", dependencies = "nvim-tree/nvim-web-devicons" },
+		-- git
+		{ "aspeddro/gitui.nvim", config = true },
 		{ "lewis6991/gitsigns.nvim", config = true },
 		{
 			"akinsho/git-conflict.nvim",
@@ -114,36 +117,24 @@ require("lazy").setup({
 		{ "tpope/vim-repeat" },
 		{ "tpope/vim-surround" },
 		{ "tpope/vim-sleuth" },
-		-- {'mhartington/formatter.nvim', cmd = 'Format'},
 		-- formatter
 		{
 			"stevearc/conform.nvim",
-			-- keys = {
-			-- 	{
-			-- 		-- Customize or remove this keymap to your liking
-			-- 		"<leader>fmt",
-			-- 		function()
-			-- 			require("conform").format({ async = true, lsp_format = "fallback" })
-			-- 		end,
-			-- 		mode = "",
-			-- 		desc = "Format buffer",
-			-- 	},
-			-- },
-
 			opts = {},
 			config = function()
 				require("setup-plugins.conform")
 			end,
 		},
-		{ "Pocco81/HighStr.nvim" },
+		-- { "Pocco81/HighStr.nvim" },
 		{
 			"iamcco/markdown-preview.nvim",
+			cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+			ft = { "markdown" },
 			build = function()
 				vim.fn["mkdp#util#install"]()
 			end,
 		},
 		{ "windwp/nvim-autopairs", event = "InsertEnter", config = true },
-		{ "jxnblk/vim-mdx-js" },
 		{
 			"goolord/alpha-nvim",
 			dependencies = { "nvim-tree/nvim-web-devicons" },
