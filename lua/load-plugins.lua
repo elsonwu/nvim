@@ -4,12 +4,13 @@
 require("lazy").setup({
 	spec = {
 		-- colorscheme
-		{ "dracula/vim", lazy = false, name = "dracula" }, -- Treesitter
+		{ "dracula/vim", lazy = false, name = "dracula" },
 		{ "github/copilot.vim", event = "VeryLazy" },
 		{ "j-hui/fidget.nvim", event = "BufEnter", lazy = true, opts = {} },
 		{ "akinsho/toggleterm.nvim", event = "VeryLazy", version = "*", config = true },
 		-- search & replace
 		{ "windwp/nvim-spectre", event = "VeryLazy", config = true },
+		-- Treesitter
 		{
 			"nvim-treesitter/nvim-treesitter",
 			event = "VeryLazy",
@@ -18,6 +19,12 @@ require("lazy").setup({
 				require("setup-plugins.treesitter")
 			end,
 		},
+		-- better typescript than typescript-language-server
+		-- {
+		-- 	"pmizio/typescript-tools.nvim",
+		-- 	dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
+		-- 	opts = {},
+		-- },
 		{
 			"nvim-treesitter/nvim-treesitter-textobjects",
 			event = "VeryLazy",
@@ -30,7 +37,7 @@ require("lazy").setup({
 				"nvim-lua/popup.nvim",
 				"nvim-lua/plenary.nvim",
 				"nvim-telescope/telescope.nvim",
-				-- "nvim-telescope/telescope-fzf-native.nvim", -- FZF sorter for Telescope
+				"nvim-telescope/telescope-fzf-native.nvim", -- FZF sorter for Telescope
 				"nvim-treesitter/nvim-treesitter", -- Treesitter for better syntax highlighting and code navigation
 				-- "nvim-treesitter/playground", -- Treesitter playground for querying syntax trees
 				"neovim/nvim-lspconfig", -- LSP configurations
@@ -39,7 +46,6 @@ require("lazy").setup({
 				-- "L3MON4D3/LuaSnip", -- Snippets plugin
 				-- 'saadparwaiz1/cmp_luasnip', -- Snippets source for nvim-cmp
 				-- "junegunn/fzf", -- FZF for fuzzy finding
-				-- "junegunn/fzf.vim", -- FZF integration with Vim
 				"nvim-telescope/telescope-node-modules.nvim",
 				-- "Snikimonkd/telescope-git-conflicts.nvim",
 				-- 'HUAHUAI23/telescope-dapzzzz',
@@ -50,6 +56,7 @@ require("lazy").setup({
 				require("setup-plugins.telescope")
 			end,
 		}, -- Telescope plugins
+		{ "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
 		{
 			"nvim-tree/nvim-tree.lua",
 			cmd = "NvimTreeToggle",
@@ -91,7 +98,7 @@ require("lazy").setup({
 			event = "VeryLazy",
 			config = function()
 				require("which-key").setup({
-					triggers = "",
+					triggers = {},
 				})
 			end,
 		},
@@ -107,14 +114,15 @@ require("lazy").setup({
 		{ "qpkorr/vim-bufkill", event = "VeryLazy" },
 		{
 			"ggandor/leap.nvim",
-			event = "VeryLazy",
+			lazy = false,
+			event = "UIEnter",
 			config = function()
 				require("setup-plugins.leap")
 			end,
 		},
-		{ "tpope/vim-repeat", event = "VeryLazy" },
-		{ "tpope/vim-surround", event = "VeryLazy" },
-		{ "tpope/vim-sleuth", event = "VeryLazy" },
+		{ "tpope/vim-repeat", lazy = false, event = "UIEnter" },
+		{ "tpope/vim-surround", lazy = false, event = "UIEnter" },
+		{ "tpope/vim-sleuth", lazy = false, event = "UIEnter" },
 		-- formatter
 		{
 			"stevearc/conform.nvim",
@@ -162,8 +170,7 @@ require("lazy").setup({
 			config = function()
 				require("setup-plugins.cmp")
 			end,
-		}, -- Better rust support
-		{ "simrat39/rust-tools.nvim", ft = "rust", dependencies = { "neovim/nvim-lspconfig" } }, -- LSP Support
+		},
 		{ "neovim/nvim-lspconfig", event = "VeryLazy" },
 		{
 			"williamboman/mason.nvim",
@@ -202,17 +209,20 @@ require("lazy").setup({
 			reset = true, -- reset the runtime path to $VIMRUNTIME and your config directory
 			paths = {}, -- add any custom paths here that you want to includes in the rtp
 			disabled_plugins = {
+				"editorconfig",
 				"gzip",
 				"man",
 				"matchit",
 				"matchparen",
 				"netrwPlugin",
+				"osc52",
+				"rplugin",
+				"shada",
+				"spellfile",
 				"tarPlugin",
 				"tohtml",
 				"tutor",
 				"zipPlugin",
-				"rplugin",
-				"shada",
 			},
 		},
 	},

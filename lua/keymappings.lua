@@ -40,10 +40,10 @@ keymap("n", "<leader>h", "<cmd>Lspsaga peek_definition<CR>", { noremap = true, s
 keymap("n", "<leader>T", "<cmd>Lspsaga peek_type_definition<CR>", { noremap = true, silent = true })
 keymap("n", "<leader>gk", "<cmd>Lspsaga peek_definition<CR>", { noremap = true, silent = true })
 keymap("n", "<leader>gr", "<cmd>Lspsaga finder<CR>", { noremap = true, silent = true })
-keymap("n", "<leader>gE", "<cmd>Lspsaga show_buf_diagnostics<CR>", { noremap = true, silent = true })
-keymap("n", "<leader>ge", "<cmd>Lspsaga show_cursor_diagnostics<CR>", { noremap = true, silent = true })
+keymap("n", "<leader>gE", "<cmd>Lspsaga show_workspace_diagnostics<CR>", { noremap = true, silent = true })
+keymap("n", "<leader>ge", "<cmd>Lspsaga show_buf_diagnostics<CR>", { noremap = true, silent = true })
 keymap("n", "<leader>sn", ":Telescope node_modules list<CR>", { noremap = true, silent = true })
-keymap("n", "<leader>ss", ':lua require("telescope.builtin").live_grep()<CR>', { noremap = true, silent = true })
+keymap("n", "<leader>ss", ':Telescope live_grep<CR>', { noremap = true, silent = true })
 keymap("n", "<leader>sb", ':lua require"telescope.builtin".buffers()<CR>', { noremap = true, silent = true })
 keymap(
 	"n",
@@ -86,6 +86,7 @@ keymap("n", "<leader>dl", ":lua require'dap'.run_last()<CR>", { noremap = true, 
 
 -- Git
 keymap("n", "<leader>bb", ":Gitsigns blame_line<CR>", { noremap = true, silent = true })
+keymap("n", "<leader>git", ":Gitui<CR>", { noremap = true, silent = true })
 
 -- Terminal
 keymap("n", "<leader>tt", ":ToggleTerm<CR>", { noremap = true, silent = true })
