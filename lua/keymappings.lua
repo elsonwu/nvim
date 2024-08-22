@@ -14,7 +14,7 @@ local keymap = vim.keymap.set
 keymap("n", "<leader>ww", ":bdelete<CR>", { silent = true })
 keymap("n", "<leader>wh", ":NvimTreeToggle<CR>", { silent = true })
 keymap("n", "<leader>ff", ":NvimTreeFindFileToggle<CR>", { silent = true })
-keymap("n", "<leader>F", ":NvimTreeFindFile<CR>", { silent = true })
+
 keymap("n", "<C-n>", ":bnext<CR>", { silent = true })
 keymap("n", "<C-p>", ":bprev<CR>", { silent = true })
 keymap("x", "<", "<gv", { noremap = true, silent = true })
@@ -38,7 +38,6 @@ keymap("n", "gd", ':lua require"telescope.builtin".lsp_definitions()<CR>', { nor
 keymap("n", "<leader>rn", "<cmd>Lspsaga rename<CR>", { noremap = true, silent = true })
 keymap("n", "<leader>h", "<cmd>Lspsaga peek_definition<CR>", { noremap = true, silent = true })
 keymap("n", "<leader>T", "<cmd>Lspsaga peek_type_definition<CR>", { noremap = true, silent = true })
-keymap("n", "<leader>gk", "<cmd>Lspsaga peek_definition<CR>", { noremap = true, silent = true })
 keymap("n", "<leader>gr", "<cmd>Lspsaga finder<CR>", { noremap = true, silent = true })
 keymap("n", "<leader>gE", "<cmd>Lspsaga show_workspace_diagnostics<CR>", { noremap = true, silent = true })
 keymap("n", "<leader>ge", "<cmd>Lspsaga show_buf_diagnostics<CR>", { noremap = true, silent = true })
@@ -57,39 +56,9 @@ keymap(
 	':lua require("telescope.builtin").grep_string({ search = vim.fn.expand("<cword>") })<CR>',
 	{ noremap = true, silent = true }
 )
-keymap(
-	"n",
-	"<leader>gi",
-	':lua require"telescope.builtin".lsp_implementations()<CR>',
-	{ noremap = true, silent = true }
-)
-keymap(
-	"n",
-	"<leader>gt",
-	':lua require"telescope.builtin".lsp_type_definitions()<CR>',
-	{ noremap = true, silent = true }
-)
-
--- Diagnostic jump can use `<c-o>` to jump back
-keymap("n", "[e", "<cmd>Lspsaga diagnostic_jump_prev<CR>", { noremap = true, silent = true })
-keymap("n", "]e", "<cmd>Lspsaga diagnostic_jump_next<CR>", { noremap = true, silent = true })
-
--- DAP debugger
-keymap("n", "<leader>dc", ":lua require'dap'.continue()<CR>", { noremap = true, silent = true })
-keymap("n", "<leader>d_", ":lua require'dap'.run_to_cursor()<CR>", { noremap = true, silent = true })
-keymap("n", "<leader>do", ":lua require'dap'.step_over()<CR>", { noremap = true, silent = true })
-keymap("n", "<leader>dO", ":lua require'dap'.step_out()<CR>", { noremap = true, silent = true })
-keymap("n", "<leader>di", ":lua require'dap'.step_into()<CR>", { noremap = true, silent = true })
-keymap("n", "<leader>db", ":lua require'dap'.toggle_breakpoint()<CR>", { noremap = true, silent = true })
-keymap("n", "<leader>dd", ":lua require'dap'.repl.open()<CR>", { noremap = true, silent = true })
-keymap("n", "<leader>dl", ":lua require'dap'.run_last()<CR>", { noremap = true, silent = true })
 
 -- Git
 keymap("n", "<leader>bb", ":Gitsigns blame_line<CR>", { noremap = true, silent = true })
-keymap("n", "<leader>git", ":Gitui<CR>", { noremap = true, silent = true })
-
--- Terminal
-keymap("n", "<leader>tt", ":ToggleTerm<CR>", { noremap = true, silent = true })
 
 -- Copilet
 keymap("i", "<C-J>", 'copilot#Accept("\\<CR>")', { expr = true, replace_keycodes = false })
