@@ -106,9 +106,14 @@ return {
 		require("nvim-tree").setup({
 			on_attach = on_attach,
 			-- sort_by = "case_sensitive",
+			sync_root_with_cwd = true,
 			respect_buf_cwd = true,
 			disable_netrw = true,
 			hijack_cursor = true,
+			update_focused_file = {
+				enable = true,
+				update_root = true,
+			},
 			view = {
 				adaptive_size = true,
 				-- mappings = {list = {{key = "u", action = "dir_up"}}}
