@@ -62,9 +62,9 @@ return {
 				}),
 			},
 			sources = cmp.config.sources({
-				{ name = "nvim_lsp" }, -- Ensure LSP comes first
-				{ name = "path" }, -- Path completions
-				{ name = "buffer" }, -- Buffer completions
+				{ name = "nvim_lsp", max_item_count = 15 }, -- Ensure LSP comes first
+				{ name = "path", max_item_count = 5 }, -- Path completions
+				{ name = "buffer", max_item_count = 5 }, -- Buffer completions
 			}),
 			sorting = {
 				priority_weight = 2,

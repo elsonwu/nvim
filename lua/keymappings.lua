@@ -42,7 +42,8 @@ keymap("n", "<leader>gr", "<cmd>Lspsaga finder<CR>", { noremap = true, silent = 
 keymap("n", "<leader>gE", "<cmd>Lspsaga show_workspace_diagnostics<CR>", { noremap = true, silent = true })
 keymap("n", "<leader>ge", "<cmd>Lspsaga show_buf_diagnostics<CR>", { noremap = true, silent = true })
 keymap("n", "<leader>sn", ":Telescope node_modules list<CR>", { noremap = true, silent = true })
-keymap("n", "<leader>ss", ':Telescope live_grep<CR>', { noremap = true, silent = true })
+-- keymap("n", "<leader>ss", ':Telescope live_grep<CR>', { noremap = true, silent = true })
+keymap("n", "<leader>ss", ":lua require('telescope').extensions.live_grep_args.live_grep_args()<CR>")
 keymap("n", "<leader>sb", ':lua require"telescope.builtin".buffers()<CR>', { noremap = true, silent = true })
 keymap(
 	"n",
@@ -50,12 +51,20 @@ keymap(
 	":Telescope find_files find_command=rg,--smart-case,--ignore,--hidden,--files<CR>",
 	{ noremap = true, silent = true }
 )
+
 keymap(
 	"n",
 	"<leader>sw",
-	':lua require("telescope.builtin").grep_string({ search = vim.fn.expand("<cword>") })<CR>',
+	":lua require(\"telescope-live-grep-args.shortcuts\").grep_word_under_cursor()<CR>",
 	{ noremap = true, silent = true }
 )
+
+-- keymap(
+-- 	"n",
+-- 	"<leader>sw",
+-- 	':lua require("telescope.builtin").grep_string({ search = vim.fn.expand("<cword>") })<CR>',
+-- 	{ noremap = true, silent = true }
+-- )
 
 -- Git
 keymap("n", "<leader>bb", ":Gitsigns blame_line<CR>", { noremap = true, silent = true })

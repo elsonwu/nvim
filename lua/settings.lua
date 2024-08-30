@@ -37,3 +37,6 @@ vim.g.copilot_no_tab_map = true
 -- end
 
 pcall(vim.cmd, "colorscheme dracula")
+
+vim.cmd("autocmd BufNewFile,BufRead *.avdl setfiletype java")
+vim.cmd("autocmd BufNewFile,BufRead *.mdx setfiletype markdown")

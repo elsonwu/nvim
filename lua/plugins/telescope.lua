@@ -6,8 +6,9 @@ return {
 		"nvim-lua/popup.nvim",
 		"nvim-lua/plenary.nvim",
 		"nvim-telescope/telescope.nvim",
-		"nvim-telescope/telescope-file-browser.nvim",
 		"piersolenski/telescope-import.nvim",
+		{ "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
+		{ "nvim-telescope/telescope-live-grep-args.nvim", version = "^1.0.0" },
 	},
 	config = function()
 		local actions = require("telescope.actions")
@@ -34,28 +35,26 @@ return {
 			actions.close(prompt_bufnr)
 		end
 
+		local lga_actions = require("telescope-live-grep-args.actions")
+
 		require("telescope").setup({
-			pickers = {
-				find_files = {
-					theme = "ivy",
-				},
-			},
 			defaults = {
-				vimgrep_arguments = {
-					"rg",
-					"--color=never",
-					"--no-heading",
-					-- "--with-filename",
-					"--line-number",
-					"--column",
-					"--smart-case",
-					-- "--fixed-string",
-				},
 				layout_config = { height = 0.95, width = 0.95 },
 				layout_strategy = "vertical",
+				prompt_prefix = "🔍 ",
+				selection_caret = "➜ ",
+				entry_prefix = "  ",
 				path_display = { "absolute" },
+				color_devicons = true,
+				set_env = { COLORTERM = "truecolor" }, -- default = nil,
+				border = {},
+				borderchars = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
 				mappings = {
 					i = {
+						["<C-o>"] = function(p_bufnr)
+							require("telescope.actions").send_selected_to_qflist(p_bufnr)
+							vim.cmd.cfdo("edit")
+						end,
 						["<esc>"] = actions.close,
 						["<C-j>"] = actions.move_selection_next,
 						["<C-k>"] = actions.move_selection_previous,
@@ -64,13 +63,21 @@ return {
 					},
 					n = {
 						["<C-q>"] = send_to_qflist,
+						["<C-o>"] = function(p_bufnr)
+							require("telescope.actions").send_selected_to_qflist(p_bufnr)
+							vim.cmd.cfdo("edit")
+						end,
 					},
 				},
-				set_env = { COLORTERM = "truecolor" }, -- default = nil,
+			},
+			extensions = {
+				live_grep_args = {
+					auto_quoting = true, -- enable/disable auto-quoting
+				},
 			},
 		})
 
-		-- require("telescope").load_extension("fzf")
-		require("telescope").load_extension("file_browser")
+		require("telescope").load_extension("fzf")
+		require("telescope").load_extension("live_grep_args")
 	end,
 }

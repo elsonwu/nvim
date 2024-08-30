@@ -25,9 +25,9 @@ return {
 				lspconfig[server_name].setup({})
 			end,
 
-			-- ["tsserver"] = function()
-			-- 	-- skip
-			-- end,
+			["tsserver"] = function()
+				-- skip
+			end,
 
 			["yamlls"] = function()
 				lspconfig.yamlls.setup({
