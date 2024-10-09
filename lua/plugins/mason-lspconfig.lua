@@ -6,7 +6,7 @@ return {
 		require("mason-lspconfig").setup({
 			automatic_installation = true,
 			ensure_installed = {
-				"tsserver",
+				"ts_ls",
 				"rust_analyzer",
 				"gopls",
 				"lua_ls",
@@ -25,8 +25,20 @@ return {
 				lspconfig[server_name].setup({})
 			end,
 
-			["tsserver"] = function()
-				-- skip
+			-- ["ts_ls"] = function()
+			-- 	-- skip
+			-- end,
+
+			["jdtls"] = function()
+				lspconfig.jdtls.setup({
+					settings = {
+						java = {
+							configuration = {
+								updateBuildConfiguration = "automatic",
+							},
+						},
+					},
+				})
 			end,
 
 			["yamlls"] = function()

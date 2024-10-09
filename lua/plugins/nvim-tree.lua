@@ -1,8 +1,8 @@
 return {
 	enabled = true,
 	"nvim-tree/nvim-tree.lua",
-	cmd = "NvimTreeToggle",
-	event = "UIEnter",
+	-- cmd = "NvimTreeToggle",
+	-- event = "UIEnter",
 	dependencies = { "nvim-tree/nvim-web-devicons" },
 	opts = {
 		sync_root_with_cwd = true,

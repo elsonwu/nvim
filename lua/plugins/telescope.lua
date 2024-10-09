@@ -7,6 +7,7 @@ return {
 		"nvim-lua/plenary.nvim",
 		"nvim-telescope/telescope.nvim",
 		"piersolenski/telescope-import.nvim",
+		--"nvim-telescope/telescope-file-browser.nvim",
 		{ "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
 		{ "nvim-telescope/telescope-live-grep-args.nvim", version = "^1.0.0" },
 	},
@@ -35,8 +36,6 @@ return {
 			actions.close(prompt_bufnr)
 		end
 
-		local lga_actions = require("telescope-live-grep-args.actions")
-
 		require("telescope").setup({
 			defaults = {
 				layout_config = { height = 0.95, width = 0.95 },
@@ -51,6 +50,9 @@ return {
 				borderchars = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
 				mappings = {
 					i = {
+						["<C-n>"] = function()
+							vim.cmd("stopinsert")
+						end, -- Switch to normal mode
 						["<C-o>"] = function(p_bufnr)
 							require("telescope.actions").send_selected_to_qflist(p_bufnr)
 							vim.cmd.cfdo("edit")
@@ -62,6 +64,9 @@ return {
 						["<C-q>"] = send_to_qflist,
 					},
 					n = {
+						["<C-i>"] = function()
+							vim.cmd("startinsert")
+						end, -- Switch to insert mode
 						["<C-q>"] = send_to_qflist,
 						["<C-o>"] = function(p_bufnr)
 							require("telescope.actions").send_selected_to_qflist(p_bufnr)
@@ -71,12 +76,17 @@ return {
 				},
 			},
 			extensions = {
+				file_browser = {
+					cwd_to_path = true,
+					no_ignore = true,
+				},
 				live_grep_args = {
 					auto_quoting = true, -- enable/disable auto-quoting
 				},
 			},
 		})
 
+		-- require("telescope").load_extension("file_browser")
 		require("telescope").load_extension("fzf")
 		require("telescope").load_extension("live_grep_args")
 	end,
