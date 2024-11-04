@@ -43,7 +43,7 @@ return {
 				prompt_prefix = "🔍 ",
 				selection_caret = "➜ ",
 				entry_prefix = "  ",
-				path_display = { "absolute" },
+				path_display = { "filename_first" },
 				color_devicons = true,
 				set_env = { COLORTERM = "truecolor" }, -- default = nil,
 				border = {},

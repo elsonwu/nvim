@@ -1,7 +1,7 @@
 return {
 	"glepnir/lspsaga.nvim",
 	branch = "main",
-	-- event = "VeryLazy",
+	event = "BufRead",
 	dependencies = {
 		{ "williamboman/mason-lspconfig.nvim", "neovim/nvim-lspconfig" },
 	},

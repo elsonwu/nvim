@@ -1,4 +1,5 @@
 return {
+	event = "BufRead",
 	"nvim-treesitter/nvim-treesitter",
 	build = ":TSUpdate",
 	config = function()

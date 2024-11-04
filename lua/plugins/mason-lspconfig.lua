@@ -1,12 +1,14 @@
 return {
 	"williamboman/mason-lspconfig.nvim",
-	-- event = "VeryLazy",
+	event = "UIEnter",
 	dependencies = { "williamboman/mason.nvim" },
 	config = function()
 		require("mason-lspconfig").setup({
 			automatic_installation = true,
 			ensure_installed = {
 				"ts_ls",
+				"vtsls",
+				"jdtls",
 				"rust_analyzer",
 				"gopls",
 				"lua_ls",
@@ -23,6 +25,10 @@ return {
 			-- a dedicated handler.
 			function(server_name) -- default handler (optional)
 				lspconfig[server_name].setup({})
+			end,
+
+			["vtsls"] = function()
+				-- skip
 			end,
 
 			-- ["ts_ls"] = function()
