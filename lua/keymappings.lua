@@ -55,16 +55,9 @@ keymap(
 keymap(
 	"n",
 	"<leader>sw",
-	":lua require(\"telescope-live-grep-args.shortcuts\").grep_word_under_cursor()<CR>",
+	':lua require("telescope-live-grep-args.shortcuts").grep_word_under_cursor()<CR>',
 	{ noremap = true, silent = true }
 )
-
--- keymap(
--- 	"n",
--- 	"<leader>sw",
--- 	':lua require("telescope.builtin").grep_string({ search = vim.fn.expand("<cword>") })<CR>',
--- 	{ noremap = true, silent = true }
--- )
 
 -- Git
 keymap("n", "<leader>bb", ":Gitsigns blame_line<CR>", { noremap = true, silent = true })
