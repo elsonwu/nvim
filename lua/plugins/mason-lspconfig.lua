@@ -3,6 +3,9 @@ return {
 	event = "UIEnter",
 	dependencies = { "williamboman/mason.nvim" },
 	config = function()
+		local capabilities = vim.lsp.protocol.make_client_capabilities()
+		capabilities.textDocument.completion.completionItem.snippetSupport = false -- Disable snippet support if not needed
+
 		require("mason-lspconfig").setup({
 			automatic_installation = true,
 			ensure_installed = {
@@ -31,9 +34,18 @@ return {
 				-- skip
 			end,
 
-			-- ["ts_ls"] = function()
-			-- 	-- skip
-			-- end,
+			["ts_ls"] = function()
+				lspconfig.ts_ls.setup({
+					capabilities = capabilities,
+					filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact", "mdx" }, -- Add 'mdx' here
+					root_dir = lspconfig.util.root_pattern("package.json", "tsconfig.json", ".git"),
+					settings = {
+						completions = {
+							completeFunctionCalls = true,
+						},
+					},
+				})
+			end,
 
 			["jdtls"] = function()
 				lspconfig.jdtls.setup({
