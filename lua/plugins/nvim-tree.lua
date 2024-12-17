@@ -20,9 +20,21 @@ return {
 			update_root = true,
 		},
 		view = {
-			adaptive_size = true,
+			adaptive_size = false,
+			float = {
+				enable = true,
+				open_win_config = {
+					relative = "editor",
+					border = "rounded",
+					width = 80,
+					height = 30,
+					row = 2,
+					col = 5,
+				},
+			},
 		},
 		git = {
+			enable = false,
 			ignore = true,
 			timeout = 1000,
 		},
@@ -37,6 +49,7 @@ return {
 				"__pycache__",
 			},
 		},
+
 		-- filters = {
 		-- 	dotfiles = false,
 		-- 	custom = { ".git", "node_modules", "__pycache__" },
