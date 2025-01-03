@@ -1,11 +1,11 @@
 return {
-	enabled = true,
+	-- enabled = false,
 	"nvim-tree/nvim-tree.lua",
 	-- cmd = "NvimTreeToggle",
 	-- event = "UIEnter",
 	dependencies = { "nvim-tree/nvim-web-devicons" },
 	opts = {
-		auto_reload_on_write = true,
+		auto_reload_on_write = false,
 		disable_netrw = true,
 		hijack_netrw = true,
 		update_cwd = true,
@@ -43,6 +43,7 @@ return {
 			auto_open = true,
 		},
 		filesystem_watchers = {
+			enable = false,
 			ignore_dirs = {
 				"node_modules",
 				".git",
@@ -68,6 +69,20 @@ return {
 					bottom = "─",
 					none = " ",
 				},
+			},
+		},
+		log = {
+			enable = false,
+			truncate = true,
+			types = {
+				all = false,
+				config = false,
+				copy_paste = false,
+				dev = false,
+				diagnostics = true,
+				git = true,
+				profile = true,
+				watcher = true,
 			},
 		},
 	},

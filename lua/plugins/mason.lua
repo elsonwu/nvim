@@ -1,7 +1,7 @@
 return {
 	"williamboman/mason.nvim",
-	event = "UIEnter",
-	-- event = "VeryLazy",
+	-- event = "UIEnter",
+	event = "VeryLazy",
 	build = ":MasonUpdate",
 	opts = {
 		providers = {
