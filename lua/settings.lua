@@ -39,4 +39,4 @@ vim.g.copilot_no_tab_map = true
 pcall(vim.cmd, "colorscheme dracula")
 
 -- vim.cmd("autocmd BufNewFile,BufRead *.avdl setfiletype java")
--- vim.cmd("autocmd BufNewFile,BufRead *.mdx setfiletype markdown")
+vim.cmd("autocmd BufNewFile,BufRead *.mdx setfiletype typescriptreact")
