@@ -1,8 +1,7 @@
 return {
 	-- enabled = false,
 	"nvim-tree/nvim-tree.lua",
-	-- cmd = "NvimTreeToggle",
-	-- event = "UIEnter",
+	-- cmd = { "NvimTreeToggle", "NvimTreeFindFile" },
 	dependencies = { "nvim-tree/nvim-web-devicons" },
 	opts = {
 		auto_reload_on_write = false,
@@ -16,7 +15,7 @@ return {
 		respect_buf_cwd = true,
 		hijack_cursor = true,
 		update_focused_file = {
-			enable = true,
+			enable = false,
 			update_root = true,
 		},
 		view = {
@@ -25,11 +24,13 @@ return {
 				enable = true,
 				open_win_config = {
 					relative = "editor",
-					border = "rounded",
-					width = 80,
-					height = 30,
-					row = 2,
-					col = 5,
+					-- border = "rounded",
+					border = "shadow",
+          -- style = "minimal",
+					width = 70,
+					height = 25,
+					row = 1,
+					col = 1,
 				},
 			},
 		},
@@ -50,11 +51,11 @@ return {
 				"__pycache__",
 			},
 		},
-
-		-- filters = {
-		-- 	dotfiles = false,
-		-- 	custom = { ".git", "node_modules", "__pycache__" },
-		-- },
+		filters = {
+			enable = false,
+			dotfiles = false,
+			custom = { ".git", "node_modules", "__pycache__" },
+		},
 		renderer = {
 			highlight_git = false,
 			highlight_opened_files = "none",
