@@ -11,7 +11,7 @@ vim.api.nvim_set_keymap("i", "<C-l>", "<Right>", {})
 local keymap = vim.keymap.set
 
 -- basic
-keymap("n", "<leader>ww", ":bdelete<CR>", { silent = true })
+keymap("n", "<leader>ww", "<cmd>bdelete<CR>", { silent = true })
 keymap("n", "<leader>wh", ":NvimTreeToggle<CR>", { silent = true })
 keymap("n", "<leader>ff", ":NvimTreeFindFileToggle<CR>", { silent = true })
 
@@ -22,42 +22,32 @@ keymap("x", ">", ">gv", { noremap = true, silent = true })
 
 -- search & replace
 keymap("n", "<leader>S", '<cmd>lua require("spectre").toggle()<CR>', {
-	desc = "Toggle Spectre",
+  desc = "Toggle Spectre",
 })
 
 -- format
 keymap(
-	"n",
-	"<leader>fmt",
-	':lua require("conform").format({ async = true, lsp_format = "fallback" })<CR>',
-	{ noremap = true, silent = true }
+  "n",
+  "<leader>fmt",
+  ':lua require("conform").format({ async = true, lsp_format = true })<CR>',
+  { noremap = true, silent = true }
 )
 
 -- LSP
-keymap("n", "gd", ':lua require"telescope.builtin".lsp_definitions()<CR>', { noremap = true, silent = true })
+keymap("n", "gd", "<cmd>Lspsaga goto_definition<CR>", { noremap = true, silent = true })
 keymap("n", "<leader>rn", "<cmd>Lspsaga rename<CR>", { noremap = true, silent = true })
 keymap("n", "<leader>h", "<cmd>Lspsaga peek_definition<CR>", { noremap = true, silent = true })
-keymap("n", "<leader>T", "<cmd>Lspsaga peek_type_definition<CR>", { noremap = true, silent = true })
+keymap("n", "<leader>gt", "<cmd>Lspsaga peek_type_definition<CR>", { noremap = true, silent = true })
 keymap("n", "<leader>gr", "<cmd>Lspsaga finder<CR>", { noremap = true, silent = true })
 keymap("n", "<leader>gE", "<cmd>Lspsaga show_workspace_diagnostics<CR>", { noremap = true, silent = true })
 keymap("n", "<leader>ge", "<cmd>Lspsaga show_buf_diagnostics<CR>", { noremap = true, silent = true })
-keymap("n", "<leader>ss", "<cmd>lua require('telescope').extensions.live_grep_args.live_grep_args()<CR>")
+keymap("n", "<leader>ss", '<cmd>lua require("telescope.builtin").live_grep()<CR>')
 keymap("n", "<leader>sb", '<cmd>Telescope buffers<CR>', { noremap = true, silent = true })
 keymap("n", "<leader>sg", '<cmd>Telescope git_status<CR>', { noremap = true, silent = true })
-keymap(
-	"n",
-	"<leader>sf",
-	":Telescope find_files find_command=rg,--smart-case,--ignore,--hidden,--files,--glob=!.git/**,--glob=!node_modules/**<CR>",
-	{ noremap = true, silent = true }
-)
+keymap("n", "<leader>sf", "<cmd>Telescope find_files<CR>", { noremap = true, silent = true })
 
 
-keymap(
-	"n",
-	"<leader>sw",
-	':lua require("telescope-live-grep-args.shortcuts").grep_word_under_cursor()<CR>',
-	{ noremap = true, silent = true }
-)
+keymap("n", "<leader>sw", require('telescope.builtin').grep_string, { noremap = true, silent = true })
 
 -- Git
 keymap("n", "<leader>bb", ":Gitsigns blame_line<CR>", { noremap = true, silent = true })

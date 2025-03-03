@@ -1,3 +1,6 @@
 return {
-	"notjedi/nvim-rooter.lua",
+  enabled = false,
+  lazy = false,
+  "notjedi/nvim-rooter.lua",
+  config = true
 }
