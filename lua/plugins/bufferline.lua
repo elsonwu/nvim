@@ -1,21 +1,30 @@
 return {
-  -- enabled = false,
+	-- enabled = false,
 	"akinsho/bufferline.nvim",
 	dependencies = "nvim-tree/nvim-web-devicons",
 	event = "VeryLazy",
 	version = "*",
 	opts = {
 		options = {
-			diagnostics = "nvim_lsp",
-			diagnostics_indicator = function(count, level)
-				local icon = level:match("error") and " " or ""
-				return " " .. icon .. count
-			end,
-			separator_style = "thick",
-			truncate_names = false, -- whether or not tab names should be truncated
+			mode = "buffers",
+			numbers = "none",
+			diagnostics = false,
+			diagnostics_update_in_insert = false,
+			separator_style = "thin",
+			truncate_names = true,
+			max_name_length = 15,
+			max_prefix_length = 10,
+			tab_size = 15,
 			show_close_icon = false,
-			show_buffer_icons = false, -- disable filetype icons for buffers
+			show_buffer_icons = false,
 			show_buffer_close_icons = false,
+			show_tab_indicators = false,
+			always_show_bufferline = false,
+			offsets = {},
+			sort_by = "id",
+			hover = {
+				enabled = false,
+			},
 		},
 	},
 }

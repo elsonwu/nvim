@@ -1,7 +1,7 @@
 return {
 	"goolord/alpha-nvim",
-	event = "BufEnter",
-	dependencies = { "nvim-tree/nvim-web-devicons" },
+	event = "VimEnter", -- More specific than BufEnter
+	dependencies = { {"nvim-tree/nvim-web-devicons", lazy = true} },
 	config = function()
 		local startify = require("alpha.themes.startify")
 

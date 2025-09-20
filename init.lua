@@ -1,3 +1,10 @@
+-- Try to load impatient first for faster startup
+local status_ok, impatient = pcall(require, "impatient")
+if status_ok then
+  impatient.enable_profile()
+end
+
+-- Disable unused built-in plugins
 local disabled_builtins = {
   "2html_plugin",
   "getscript",
@@ -74,5 +81,7 @@ require("lazy").setup("plugins", {
   },
 })
 
+require("performance").setup()  -- Load performance optimizations first
+require("startup-profile").setup()  -- Load profiling utilities
 require("settings")
 require("keymappings")

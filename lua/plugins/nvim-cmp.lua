@@ -1,9 +1,8 @@
 return {
   "hrsh7th/nvim-cmp",
-  event = "InsertEnter",
+  event = { "InsertEnter", "CmdlineEnter" },
   lazy = true,
   dependencies = {
-    -- 'hrsh7th/cmp-cmdline', -- command line
     "hrsh7th/cmp-buffer",   -- buffer completions
     "hrsh7th/cmp-nvim-lua", -- nvim config completions
     "hrsh7th/cmp-nvim-lsp", -- lsp completions
@@ -26,14 +25,33 @@ return {
     end
 
     cmp.setup({
+      performance = {
+        debounce = 150,        -- Increase debounce for better performance
+        throttle = 60,         -- Increase throttle time
+        fetching_timeout = 200, -- Reduce timeout
+        confirm_resolve_timeout = 80,
+        async_budget = 1,      -- Limit async operations
+        max_view_entries = 15, -- Reduce visible entries
+      },
       completion = {
-        autocomplete = false,
+        autocomplete = { require('cmp.types').cmp.TriggerEvent.TextChanged },  -- Only trigger on text change
+        keyword_length = 2,  -- Start completing after 2 characters
+        keyword_pattern = [[\%(-\?\d\+\%(\.\d\+\)\?\|\h\w*\%(-\w*\)*\)]],
+        completeopt = 'menu,menuone,noinsert,noselect',
       },
       formatting = {
+        fields = { "kind", "abbr" }, -- Remove "menu" for performance
         format = lspkind.cmp_format({
           mode = "symbol_text",
-          maxwidth = 50,
+          maxwidth = 40, -- Reduce from 50
           ellipsis_char = "...",
+          before = function(_, vim_item)
+            -- Truncate long completion items for performance
+            if #vim_item.abbr > 25 then
+              vim_item.abbr = string.sub(vim_item.abbr, 1, 25) .. "..."
+            end
+            return vim_item
+          end,
         }),
       },
       mapping = {
@@ -71,9 +89,34 @@ return {
         }),
       },
       sources = cmp.config.sources({
-        { name = "nvim_lsp", max_item_count = 15 }, -- Ensure LSP comes first
-        { name = "path",     max_item_count = 5 },  -- Path completions
-        { name = "buffer",   max_item_count = 5 },  -- Buffer completions
+        { 
+          name = "nvim_lsp", 
+          max_item_count = 15, -- Increase from 8 but still limit
+          priority = 1000,
+          keyword_length = 2,
+        },
+        { 
+          name = "path", 
+          max_item_count = 6, -- Increase from 3
+          priority = 250,
+          keyword_length = 2,
+        },
+      }, {
+        { 
+          name = "buffer", 
+          max_item_count = 8, -- Increase from 3
+          keyword_length = 3, 
+          priority = 50,
+          option = {
+            get_bufnrs = function()
+              local bufs = {}
+              for _, win in ipairs(vim.api.nvim_list_wins()) do
+                bufs[vim.api.nvim_win_get_buf(win)] = true
+              end
+              return vim.tbl_keys(bufs)
+            end
+          },
+        },
       }),
       sorting = {
         priority_weight = 2,
@@ -96,6 +139,16 @@ return {
         completion = cmp.config.window.bordered(),
         documentation = cmp.config.window.bordered(),
       },
+    })
+    
+    -- Disable cmp for large files for performance
+    vim.api.nvim_create_autocmd("BufReadPre", {
+      callback = function()
+        local ok, stats = pcall(vim.loop.fs_stat, vim.fn.expand("%"))
+        if ok and stats and stats.size > 1024 * 1024 then -- 1MB
+          require('cmp').setup.buffer({ enabled = false })
+        end
+      end,
     })
     -- CMP -- END
   end,
