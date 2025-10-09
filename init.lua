@@ -1,8 +1,5 @@
--- Try to load impatient first for faster startup
-local status_ok, impatient = pcall(require, "impatient")
-if status_ok then
-  impatient.enable_profile()
-end
+-- Note: impatient.nvim removed - no longer needed for Neovim 0.9+
+-- Neovim now has built-in fast module loading
 
 -- Disable unused built-in plugins
 local disabled_builtins = {
