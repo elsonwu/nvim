@@ -1,16 +1,3 @@
--- TODO should be removed when the bug is fixed on lspsaga
--- https://github.com/nvimdev/lspsaga.nvim/issues/1520
-vim.diagnostic.config({
-  severity_sort = true,
-  update_in_insert = false, -- Disable updating diagnostics in insert mode
-  underline = true,
-  virtual_text = {
-    spacing = 4,
-    source = 'if_many',
-    prefix = '●',
-  },
-})
-
 return {
   "glepnir/lspsaga.nvim",
   branch = "main",

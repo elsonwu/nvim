@@ -52,5 +52,21 @@ keymap("n", "<leader>sw", require('telescope.builtin').grep_string, { noremap = 
 -- Git
 keymap("n", "<leader>bb", ":Gitsigns blame_line<CR>", { noremap = true, silent = true })
 
--- Copilet
+-- Smart paste for large content (temporarily disables syntax)
+keymap("n", "<leader>p", function()
+  local syntax_enabled = vim.bo.syntax ~= "off"
+  if syntax_enabled then
+    vim.cmd("syntax off")
+    vim.notify("Paste mode: syntax disabled", vim.log.levels.INFO)
+  end
+  vim.cmd("normal! p")
+  if syntax_enabled then
+    vim.defer_fn(function()
+      vim.cmd("syntax on")
+      vim.notify("Paste complete: syntax enabled", vim.log.levels.INFO)
+    end, 100)
+  end
+end, { noremap = true, silent = true, desc = "Smart paste (disables syntax temporarily)" })
+
+-- Copilot
 keymap("i", "<C-J>", 'copilot#Accept("\\<CR>")', { expr = true, replace_keycodes = false })

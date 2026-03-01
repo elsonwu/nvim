@@ -118,13 +118,5 @@ return {
       }
     })
 
-    -- Set global LSP performance settings
-    vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
-      vim.lsp.diagnostic.on_publish_diagnostics, {
-        update_in_insert = false, -- Wait until leaving insert mode
-        virtual_text = true,
-        severity_sort = true,
-      }
-    )
   end,
 }

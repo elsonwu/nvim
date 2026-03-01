@@ -1,6 +1,5 @@
 return {
   "nvim-telescope/telescope.nvim",
-  branch = '0.1.x',
   cmd = "Telescope", -- Keeps lazy loading by command
   dependencies = {
     {"nvim-lua/popup.nvim", lazy = true},
@@ -12,7 +11,6 @@ return {
   },
   config = function()
     local actions = require("telescope.actions")
-    local trouble = require("telescope.actions.generate").open_in_trouble
 
     -- Performance optimizations
     local previewers = require("telescope.previewers")
@@ -127,7 +125,6 @@ return {
               require("telescope.actions").send_selected_to_qflist(p_bufnr)
               vim.cmd.cfdo("edit")
             end,
-            ["q"] = actions.close,
             ["<C-j>"] = actions.move_selection_next,
             ["<C-k>"] = actions.move_selection_previous,
             ["<CR>"] = actions.select_default,

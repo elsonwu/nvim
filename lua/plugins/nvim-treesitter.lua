@@ -1,72 +1,54 @@
 return {
 	"nvim-treesitter/nvim-treesitter",
-	event = { "BufReadPost", "BufNewFile" },  -- More specific events
+	event = { "BufReadPost", "BufNewFile" },
 	build = ":TSUpdate",
 	config = function()
-		local configs = require("nvim-treesitter.configs")
+		-- nvim-treesitter v1.0+ API: setup() only accepts install_dir
+		require("nvim-treesitter").setup({})
 
-		configs.setup({
-			-- Pre-install only commonly used parsers for better performance
-			ensure_installed = { "lua", "vim", "vimdoc", "javascript", "typescript", "json", "yaml", "markdown" },
-			auto_install = false,  -- Disable auto-install for better performance
-			autotag = { enable = true },
-			indent = {
-				enable = true,
-				disable = { "yaml", "python" },  -- Disable for problematic languages
-			},
-			sync_install = false,
-			highlight = {
-				enable = true,
-				additional_vim_regex_highlighting = false,  -- MAJOR performance killer - keep disabled
-				-- Disable for very large files
-				disable = function(lang, buf)
-					local max_filesize = 100 * 1024 -- 100 KB
-					local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
-					if ok and stats and stats.size > max_filesize then
-						return true
-					end
-					-- Also disable for very long lines to improve performance
-					local max_lines = 5000
-					local line_count = vim.api.nvim_buf_line_count(buf)
-					if line_count > max_lines then
-						return true
-					end
-					-- Disable for specific slow file types
-					local slow_langs = { "latex", "tex" }
-					if vim.tbl_contains(slow_langs, lang) then
-						local lines = vim.api.nvim_buf_line_count(buf)
-						if lines > 1000 then
-							return true
-						end
-					end
-				end,
-			},
-			-- Optimize incremental selection for performance
-			incremental_selection = {
-				enable = false,  -- Disable if not used
-			},
-			-- Optimize textobjects for performance  
-			textobjects = {
-				enable = false,  -- Disable if not using textobjects
-			},
-			-- Disable other expensive features if not used
-			playground = {
-				enable = false,
-			},
-			query_linter = {
-				enable = false,
-			},
-		})
+		-- Ensure common parsers are installed
+		local ensure = { "lua", "vim", "vimdoc", "javascript", "typescript", "json", "yaml", "markdown" }
+		local installed = require("nvim-treesitter").get_installed()
+		local missing = vim.tbl_filter(function(lang)
+			return not vim.tbl_contains(installed, lang)
+		end, ensure)
+		if #missing > 0 then
+			require("nvim-treesitter").install(missing)
+		end
 
-		-- Additional performance optimization for special file types
+		-- Enable treesitter highlight with large-file guards
 		vim.api.nvim_create_autocmd("FileType", {
-			pattern = { "help", "alpha", "dashboard", "neo-tree", "Trouble", "lazy", "mason" },
-			callback = function()
-				vim.b.ts_highlight = false
+			callback = function(args)
+				local buf = args.buf
+
+				-- Skip special filetypes
+				local skip_ft = { "help", "alpha", "dashboard", "neo-tree", "Trouble", "lazy", "mason" }
+				if vim.tbl_contains(skip_ft, args.match) then
+					return
+				end
+
+				-- Skip large files (>100KB)
+				local ok, stats = pcall(vim.uv.fs_stat, vim.api.nvim_buf_get_name(buf))
+				if ok and stats and stats.size > 100 * 1024 then
+					return
+				end
+
+				-- Skip files with >5000 lines
+				if vim.api.nvim_buf_line_count(buf) > 5000 then
+					return
+				end
+
+				-- Enable treesitter highlighting for this buffer
+				pcall(vim.treesitter.start, buf)
 			end,
 		})
 
-		vim.cmd("autocmd BufNewFile,BufRead *.avdl setfiletype java")
-		vim.cmd("autocmd BufNewFile,BufRead *.mdx setfiletype markdown")
+		-- Enable treesitter-based indentation
+		vim.api.nvim_create_autocmd("FileType", {
+			pattern = { "lua", "javascript", "typescript", "json", "markdown" },
+			callback = function()
+				vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+			end,
+		})
 	end,
 }
