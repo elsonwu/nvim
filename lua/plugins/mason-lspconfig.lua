@@ -2,31 +2,10 @@ return {
   lazy = true,
   "williamboman/mason-lspconfig.nvim",
   event = "VeryLazy",
-  dependencies = { "williamboman/mason.nvim", "neovim/nvim-lspconfig" },
+  dependencies = { "williamboman/mason.nvim", "neovim/nvim-lspconfig", "saghen/blink.cmp" },
   config = function()
-    local capabilities = require('cmp_nvim_lsp').default_capabilities()
-    
-    -- Performance optimizations while preserving essential features
-    capabilities.textDocument.completion.completionItem.snippetSupport = false
-    capabilities.textDocument.completion.completionItem.preselectSupport = false
-    capabilities.textDocument.completion.completionItem.insertReplaceSupport = false
-    capabilities.textDocument.completion.completionItem.labelDetailsSupport = false
-    capabilities.textDocument.completion.completionItem.deprecatedSupport = false
-    capabilities.textDocument.completion.completionItem.commitCharactersSupport = false
-    capabilities.textDocument.completion.completionItem.tagSupport = { valueSet = { 1 } }
-    capabilities.textDocument.completion.completionItem.resolveSupport = {
-      properties = {
-        'documentation',
-        'detail',
-        'additionalTextEdits',
-      }
-    }
-    
-    -- Make sure to keep formatting capabilities
-    -- This was missing from our optimizations, causing the error
-    capabilities.textDocument.formatting = true
-    capabilities.textDocument.documentFormatting = true
-    capabilities.textDocument.documentRangeFormatting = true
+    -- Use blink.cmp capabilities (replaces cmp_nvim_lsp)
+    local capabilities = require('blink.cmp').get_lsp_capabilities()
 
     -- Helper function to parse Node.js version
     local function get_node_major_version()

@@ -1,4 +1,6 @@
+-- Replaced by fzf-lua (faster, leverages native fzf binary)
 return {
+  enabled = false,
   "nvim-telescope/telescope.nvim",
   cmd = "Telescope", -- Keeps lazy loading by command
   dependencies = {

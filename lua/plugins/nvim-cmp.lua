@@ -1,4 +1,6 @@
+-- Replaced by blink.cmp (Rust fuzzy matcher, less config, faster)
 return {
+  enabled = false,
   "hrsh7th/nvim-cmp",
   event = { "InsertEnter", "CmdlineEnter" },
   lazy = true,

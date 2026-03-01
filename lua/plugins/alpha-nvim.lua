@@ -1,4 +1,6 @@
+-- Replaced by snacks.nvim dashboard
 return {
+	enabled = false,
 	"goolord/alpha-nvim",
 	event = "VimEnter", -- More specific than BufEnter
 	dependencies = { {"nvim-tree/nvim-web-devicons", lazy = true} },

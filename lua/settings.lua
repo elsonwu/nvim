@@ -44,9 +44,7 @@ vim.opt.ruler = false
 -- command reload config
 vim.api.nvim_create_user_command("ReloadConfig", "source $MYVIMRC", {})
 
--- Copilot
-vim.g.copilot_node_command = "~/.local/share/fnm/aliases/default/bin/node"
-vim.g.copilot_no_tab_map = true
+-- Copilot disabled: using Claude Code instead (re-enable in lua/plugins/copilot-lua.lua)
 
 pcall(vim.cmd, "colorscheme dracula")
 

@@ -1,5 +1,2 @@
-return {
-	event = "BufReadPre",
-	"j-hui/fidget.nvim",
-	opts = {},
-}
+-- Replaced by snacks.nvim notifier module
+return { enabled = false, "j-hui/fidget.nvim" }

@@ -1,3 +1,4 @@
+-- Replaced by copilot.lua (Lua-native, blink.cmp compatible)
 return {
 	enabled = false,
 	"github/copilot.vim",

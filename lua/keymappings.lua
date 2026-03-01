@@ -1,8 +1,10 @@
+-- Command mode navigation
 vim.api.nvim_set_keymap("c", "<C-k>", "<Up>", {})
 vim.api.nvim_set_keymap("c", "<C-j>", "<Down>", {})
 vim.api.nvim_set_keymap("c", "<C-h>", "<Left>", {})
 vim.api.nvim_set_keymap("c", "<C-l>", "<Right>", {})
 
+-- Insert mode navigation
 vim.api.nvim_set_keymap("i", "<C-k>", "<Up>", {})
 vim.api.nvim_set_keymap("i", "<C-j>", "<Down>", {})
 vim.api.nvim_set_keymap("i", "<C-h>", "<Left>", {})
@@ -10,8 +12,7 @@ vim.api.nvim_set_keymap("i", "<C-l>", "<Right>", {})
 
 local keymap = vim.keymap.set
 
--- basic
-keymap("n", "<leader>ww", "<cmd>bdelete<CR>", { silent = true })
+-- Buffer management (ww handled by snacks.bufdelete in snacks.lua)
 keymap("n", "<leader>wh", ":NvimTreeToggle<CR>", { silent = true })
 keymap("n", "<leader>ff", ":NvimTreeFindFileToggle<CR>", { silent = true })
 
@@ -20,12 +21,10 @@ keymap("n", "<C-p>", ":bprev<CR>", { silent = true })
 keymap("x", "<", "<gv", { noremap = true, silent = true })
 keymap("x", ">", ">gv", { noremap = true, silent = true })
 
--- search & replace
-keymap("n", "<leader>S", '<cmd>lua require("spectre").toggle()<CR>', {
-  desc = "Toggle Spectre",
-})
+-- Search & replace: <leader>S handled by grug-far.lua keys
+-- Fuzzy finder: <leader>sf/ss/sb/sg/sw/sh/sd/sD/sr/sc handled by fzf-lua.lua keys
 
--- format
+-- Format
 keymap(
   "n",
   "<leader>fmt",
@@ -33,7 +32,7 @@ keymap(
   { noremap = true, silent = true }
 )
 
--- LSP
+-- LSP (via Lspsaga)
 keymap("n", "gd", "<cmd>Lspsaga goto_definition<CR>", { noremap = true, silent = true })
 keymap("n", "<leader>rn", "<cmd>Lspsaga rename<CR>", { noremap = true, silent = true })
 keymap("n", "<leader>h", "<cmd>Lspsaga peek_definition<CR>", { noremap = true, silent = true })
@@ -41,13 +40,10 @@ keymap("n", "<leader>gt", "<cmd>Lspsaga peek_type_definition<CR>", { noremap = t
 keymap("n", "<leader>gr", "<cmd>Lspsaga finder<CR>", { noremap = true, silent = true })
 keymap("n", "<leader>gE", "<cmd>Lspsaga show_workspace_diagnostics<CR>", { noremap = true, silent = true })
 keymap("n", "<leader>ge", "<cmd>Lspsaga show_buf_diagnostics<CR>", { noremap = true, silent = true })
-keymap("n", "<leader>ss", '<cmd>lua require("telescope.builtin").live_grep()<CR>')
-keymap("n", "<leader>sb", '<cmd>Telescope buffers<CR>', { noremap = true, silent = true })
-keymap("n", "<leader>sg", '<cmd>Telescope git_status<CR>', { noremap = true, silent = true })
-keymap("n", "<leader>sf", "<cmd>Telescope find_files<CR>", { noremap = true, silent = true })
-
-
-keymap("n", "<leader>sw", require('telescope.builtin').grep_string, { noremap = true, silent = true })
+keymap("n", "<leader>ca", "<cmd>Lspsaga code_action<CR>", { noremap = true, silent = true })
+keymap("n", "[d", "<cmd>Lspsaga diagnostic_jump_prev<CR>", { noremap = true, silent = true })
+keymap("n", "]d", "<cmd>Lspsaga diagnostic_jump_next<CR>", { noremap = true, silent = true })
+keymap("n", "K", "<cmd>Lspsaga hover_doc<CR>", { noremap = true, silent = true })
 
 -- Git
 keymap("n", "<leader>bb", ":Gitsigns blame_line<CR>", { noremap = true, silent = true })
@@ -68,5 +64,4 @@ keymap("n", "<leader>p", function()
   end
 end, { noremap = true, silent = true, desc = "Smart paste (disables syntax temporarily)" })
 
--- Copilot
-keymap("i", "<C-J>", 'copilot#Accept("\\<CR>")', { expr = true, replace_keycodes = false })
+-- Copilot disabled: using Claude Code instead (re-enable in copilot-lua.lua if needed)

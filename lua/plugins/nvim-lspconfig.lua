@@ -2,16 +2,11 @@ return {
 	"neovim/nvim-lspconfig",
 	event = { "BufReadPre", "BufNewFile" },
 	dependencies = {
-		"hrsh7th/cmp-nvim-lsp",
+		"saghen/blink.cmp",
 	},
 	config = function()
-		-- Create proper capabilities including formatting
-		local capabilities = require('cmp_nvim_lsp').default_capabilities()
-
-		capabilities.textDocument.completion.completionItem.snippetSupport = true
-		capabilities.textDocument.completion.completionItem.resolveSupport = {
-			properties = { "documentation", "detail", "additionalTextEdits" }
-		}
+		-- Use blink.cmp capabilities (replaces cmp_nvim_lsp)
+		local capabilities = require('blink.cmp').get_lsp_capabilities()
 
 		-- Format command
 		vim.api.nvim_create_user_command("Format", function()
