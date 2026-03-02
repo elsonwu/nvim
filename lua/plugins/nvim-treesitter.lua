@@ -48,7 +48,7 @@ return {
 
 		-- Enable treesitter-based indentation for supported filetypes
 		vim.api.nvim_create_autocmd("FileType", {
-			pattern = { "lua", "javascript", "typescript", "typescriptreact", "json", "markdown" },
+			pattern = { "lua", "javascript", "typescript", "typescriptreact", "json", "markdown", "swift", "kotlin" },
 			callback = function()
 				vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
 			end,
