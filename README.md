@@ -1,6 +1,6 @@
 # Neovim Configuration
 
-A performance-optimized Neovim configuration for TypeScript/JavaScript, Java, Go, Lua, Rust, and Python development. Uses [lazy.nvim](https://github.com/folke/lazy.nvim) for plugin management with lazy-loading for fast startup.
+A performance-optimized Neovim configuration for TypeScript/JavaScript, Java, Go, Lua, Rust, Python, Swift, and Kotlin development. Uses [lazy.nvim](https://github.com/folke/lazy.nvim) for plugin management with lazy-loading for fast startup.
 
 **Leader key:** `\` (backslash)
 
@@ -214,6 +214,8 @@ Inside fzf-lua picker:
 | `:ReloadConfig` | Reload Neovim configuration |
 | `:Lazy` | Open plugin manager |
 | `:Mason` | Open LSP/tool installer |
+| `:TSInstall <lang>` | Install treesitter parser (e.g., `:TSInstall go python`) |
+| `:TSUpdate` | Update all treesitter parsers |
 | `:GrugFar` | Open search and replace |
 | `:Oil` | Open filesystem editor |
 | `:Copilot` | Copilot status/commands (disabled) |
@@ -262,11 +264,32 @@ Inside fzf-lua picker:
       snacks.lua                    -- Multi-module utility
 ```
 
+## Treesitter Parsers
+
+Installed parsers: typescript, javascript, tsx, json, yaml, lua, vim, vimdoc, markdown, swift, kotlin, ecma, jsx
+
+nvim-treesitter v1.0 requires the `tree-sitter` CLI to compile parsers. If `:TSInstall` hangs, compile manually:
+
+```sh
+# 1. Download grammar source
+cd /tmp && curl -sL "https://github.com/<repo>/archive/<revision>.tar.gz" | tar xz
+
+# 2. Compile (add --generate flag if no src/parser.c exists)
+cd <extracted-dir>/<location> && tree-sitter build -o parser.so
+
+# 3. Install
+cp parser.so ~/.local/share/nvim/site/parser/<lang>.so
+echo "<revision>" > ~/.local/share/nvim/site/parser-info/<lang>.revision
+```
+
+To find repo/revision for a language: `:lua print(vim.inspect(require("nvim-treesitter.parsers").<lang>))`
+
 ## Requirements
 
 - Neovim >= 0.10
 - [ripgrep](https://github.com/BurntSushi/ripgrep) (`rg`) - for grep operations
 - [fd](https://github.com/sharkdp/fd) - for file finding
 - [fzf](https://github.com/junegunn/fzf) - for fuzzy finding
+- [tree-sitter](https://github.com/tree-sitter/tree-sitter) CLI (`brew install tree-sitter-cli`) - for compiling parsers
 - A [Nerd Font](https://www.nerdfonts.com/) - for icons
 - Node.js - for LSP servers
