@@ -3,18 +3,7 @@ return {
 	event = { "BufReadPost", "BufNewFile" },
 	build = ":TSUpdate",
 	config = function()
-		-- nvim-treesitter v1.0+ API: setup() only accepts install_dir
 		require("nvim-treesitter").setup({})
-
-		-- Ensure common parsers are installed
-		local ensure = { "lua", "vim", "vimdoc", "javascript", "typescript", "json", "yaml", "markdown" }
-		local installed = require("nvim-treesitter").get_installed()
-		local missing = vim.tbl_filter(function(lang)
-			return not vim.tbl_contains(installed, lang)
-		end, ensure)
-		if #missing > 0 then
-			require("nvim-treesitter").install(missing)
-		end
 
 		-- Enable treesitter highlight with large-file guards
 		vim.api.nvim_create_autocmd("FileType", {
@@ -43,9 +32,9 @@ return {
 			end,
 		})
 
-		-- Enable treesitter-based indentation
+		-- Enable treesitter-based indentation for supported filetypes
 		vim.api.nvim_create_autocmd("FileType", {
-			pattern = { "lua", "javascript", "typescript", "json", "markdown" },
+			pattern = { "lua", "javascript", "typescript", "typescriptreact", "json", "markdown" },
 			callback = function()
 				vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
 			end,
