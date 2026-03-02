@@ -5,6 +5,19 @@ return {
 	config = function()
 		require("nvim-treesitter").setup({})
 
+		-- v1.0 removed :TSInstall/:TSUpdate commands, re-add them
+		vim.api.nvim_create_user_command("TSInstall", function(opts)
+			require("nvim-treesitter").install(opts.fargs)
+		end, { nargs = "+", desc = "Install treesitter parsers" })
+
+		vim.api.nvim_create_user_command("TSUpdate", function(opts)
+			if #opts.fargs > 0 then
+				require("nvim-treesitter").update(opts.fargs)
+			else
+				require("nvim-treesitter").update()
+			end
+		end, { nargs = "*", desc = "Update treesitter parsers" })
+
 		-- Enable treesitter highlight with large-file guards
 		vim.api.nvim_create_autocmd("FileType", {
 			callback = function(args)
