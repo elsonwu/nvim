@@ -5,15 +5,17 @@ return {
   opts = {
     formatters_by_ft = {
       -- lua = { "stylua" },
-      -- Nested table = use first available formatter (not both sequentially)
-      javascript = { { "eslint", "prettierd" } },
-      javascriptreact = { { "eslint", "prettierd" } },
-      typescript = { { "eslint", "prettierd" } },
-      typescriptreact = { { "eslint", "prettierd" } },
-      json = { { "jq", "prettierd" } },
+      javascript = { "eslint", "prettierd" },
+      javascriptreact = { "eslint", "prettierd" },
+      typescript = { "eslint", "prettierd" },
+      typescriptreact = { "eslint", "prettierd" },
+      json = { "jq", "prettierd" },
       go = { "goimports" },
       rust = { "rustfmt" },
       yaml = { "yamlfmt" },
+    },
+    default_format_opts = {
+      stop_after_first = true,
     },
   },
 }

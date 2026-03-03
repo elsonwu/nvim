@@ -71,7 +71,7 @@ echo "<rev>" > ~/.local/share/nvim/site/parser-info/<lang>.revision
 
 - `lazy-lock.json`: If empty (0 bytes), delete it — causes "commit is nil" errors. lazy.nvim regenerates it on next startup
 - `*.cloning` files in `~/.local/share/nvim/lazy/`: Lock files from interrupted installs — delete them before retrying
-- `conform.nvim` formatter fallback syntax: Use `{ { "eslint", "prettierd" } }` (nested table) for first-available, not `{ "eslint", "prettierd" }` (runs both)
+- `conform.nvim` formatter fallback syntax: Use `{ "eslint", "prettierd" }` with `default_format_opts = { stop_after_first = true }` for first-available (nested `{{ }}` syntax was removed)
 - Neovim 0.11 renamed `vim.treesitter.language.ft_to_lang` to `get_lang` — don't pin Telescope to `0.1.x` branch
 - `vim.o.ttyfast` is NOT a valid Neovim option — don't set it
 - For buffer size checks, use `vim.api.nvim_buf_get_offset()` for O(1) instead of iterating lines
