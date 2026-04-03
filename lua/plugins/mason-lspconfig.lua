@@ -2,24 +2,9 @@ return {
   lazy = true,
   "williamboman/mason-lspconfig.nvim",
   event = "VeryLazy",
-  dependencies = { "williamboman/mason.nvim", "neovim/nvim-lspconfig", "saghen/blink.cmp" },
+  dependencies = { "williamboman/mason.nvim", "neovim/nvim-lspconfig" },
   config = function()
-    -- Use blink.cmp capabilities (replaces cmp_nvim_lsp)
-    local capabilities = require('blink.cmp').get_lsp_capabilities()
-
-    -- Helper function to parse Node.js version
-    local function get_node_major_version()
-      local version_output = vim.fn.system("node --version") -- e.g. "v16.13.0"
-      -- Extract the digit part only (removing the 'v')
-      local version = version_output:match("%d+%.%d+%.%d+")
-      if not version then
-        return nil
-      end
-      local major = version:match("^(%d+)")
-      return tonumber(major)
-    end
-
-    local node_major_version = get_node_major_version()
+    local capabilities = vim.lsp.protocol.make_client_capabilities()
 
     require("mason-lspconfig").setup({
       automatic_installation = true, -- Reinstating automatic installation for convenience

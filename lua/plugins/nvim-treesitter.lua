@@ -5,6 +5,7 @@ return {
 	build = ":TSUpdate",
 	config = function()
 		require("nvim-treesitter").setup({})
+		local augroup = vim.api.nvim_create_augroup("nvim_treesitter_custom", { clear = true })
 
 		-- v1.0 removed :TSInstall/:TSUpdate commands, re-add them
 		vim.api.nvim_create_user_command("TSInstall", function(opts)
@@ -21,6 +22,7 @@ return {
 
 		-- Enable treesitter highlight with large-file guards
 		vim.api.nvim_create_autocmd("FileType", {
+			group = augroup,
 			callback = function(args)
 				local buf = args.buf
 
@@ -48,10 +50,22 @@ return {
 
 		-- Enable treesitter-based indentation for supported filetypes
 		vim.api.nvim_create_autocmd("FileType", {
+			group = augroup,
 			pattern = { "lua", "javascript", "typescript", "typescriptreact", "json", "markdown", "swift", "kotlin" },
 			callback = function()
 				vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
 			end,
 		})
+
+		-- Retroactively apply to buffers already loaded before this plugin initialized
+		-- (fixes race: FileType fires before BufReadPost triggers plugin load)
+		for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+			if vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].filetype ~= "" then
+				local ft = vim.bo[buf].filetype
+				if not vim.tbl_contains({ "help", "alpha", "dashboard", "neo-tree", "Trouble", "lazy", "mason" }, ft) then
+					pcall(vim.treesitter.start, buf)
+				end
+			end
+		end
 	end,
 }

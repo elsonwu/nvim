@@ -1,38 +1,16 @@
 return {
 	"neovim/nvim-lspconfig",
 	event = { "BufReadPre", "BufNewFile" },
-	dependencies = {
-		"saghen/blink.cmp",
-	},
 	config = function()
-		-- Use blink.cmp capabilities (replaces cmp_nvim_lsp)
-		local capabilities = require('blink.cmp').get_lsp_capabilities()
+		local capabilities = vim.lsp.protocol.make_client_capabilities()
 
 		-- Format command
 		vim.api.nvim_create_user_command("Format", function()
 			vim.lsp.buf.format({ timeout_ms = 2000 })
 		end, { desc = "Format file with LSP" })
 
-		-- Formatting on save (commented out, uncomment to enable)
-		local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
-		vim.api.nvim_create_autocmd("LspAttach", {
-			group = augroup,
-			callback = function(args)
-				local client = vim.lsp.get_client_by_id(args.data.client_id)
-				if client and client.server_capabilities.documentFormattingProvider then
-					-- Uncomment to enable format on save:
-					-- vim.api.nvim_clear_autocmds({ group = augroup, buffer = args.buf })
-					-- vim.api.nvim_create_autocmd("BufWritePre", {
-					--   group = augroup,
-					--   buffer = args.buf,
-					--   callback = function() vim.lsp.buf.format({ timeout_ms = 2000 }) end,
-					-- })
-				end
-			end,
-		})
-
 		-- Reduce LSP log noise
-		vim.lsp.set_log_level("ERROR")
+		vim.lsp.log.set_level(vim.log.levels.ERROR)
 
 		-- Optimize floating window handler
 		local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
@@ -98,39 +76,10 @@ return {
 
 		setup_lsp_debounce()
 
-		-- Timeout handling for references
-		local orig_references = vim.lsp.buf.references
-		vim.lsp.buf.references = function(context, options)
-			options = options or {}
-			options.timeout_ms = options.timeout_ms or 10000
-
-			vim.notify("Finding references...", vim.log.levels.INFO, { title = "LSP" })
-
-			local orig_handler = vim.lsp.handlers["textDocument/references"]
-			vim.lsp.handlers["textDocument/references"] = function(err, result, ctx, config)
-				vim.schedule(function()
-					vim.cmd("echon ''")
-				end)
-
-				if err then
-					vim.notify("References search failed: " .. (err.message or "Unknown error"), vim.log.levels.ERROR)
-					return
-				end
-
-				if not result or #result == 0 then
-					vim.notify("No references found", vim.log.levels.WARN)
-					return
-				end
-
-				vim.lsp.handlers["textDocument/references"] = orig_handler
-				return orig_handler(err, result, ctx, config)
-			end
-
-			return orig_references(context, options)
-		end
-
 		-- Auto-disable LSP for very large files (>1MB)
+		local bigfile_augroup = vim.api.nvim_create_augroup("lsp_bigfile_guard", { clear = true })
 		vim.api.nvim_create_autocmd("BufReadPre", {
+			group = bigfile_augroup,
 			callback = function()
 				local bufnr = vim.api.nvim_get_current_buf()
 				local buf_name = vim.api.nvim_buf_get_name(bufnr)
@@ -148,21 +97,21 @@ return {
 			end,
 		})
 
-		-- Optimized LSP handlers
-		vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
-			vim.lsp.handlers.hover, {
-				border = "single",
-				max_width = 80,
-				max_height = 20,
-			}
-		)
+		-- Optimized LSP handlers (Neovim 0.11+ API)
+		vim.lsp.handlers["textDocument/hover"] = function(err, result, ctx, config)
+			config = config or {}
+			config.border = config.border or "single"
+			config.max_width = config.max_width or 80
+			config.max_height = config.max_height or 20
+			return vim.lsp.handlers.hover(err, result, ctx, config)
+		end
 
-		vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(
-			vim.lsp.handlers.signature_help, {
-				border = "single",
-				max_width = 80,
-				max_height = 10,
-			}
-		)
+		vim.lsp.handlers["textDocument/signatureHelp"] = function(err, result, ctx, config)
+			config = config or {}
+			config.border = config.border or "single"
+			config.max_width = config.max_width or 80
+			config.max_height = config.max_height or 10
+			return vim.lsp.handlers.signature_help(err, result, ctx, config)
+		end
 	end,
 }

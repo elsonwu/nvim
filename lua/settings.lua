@@ -5,7 +5,7 @@ vim.opt.softtabstop = 2
 vim.opt.expandtab = true
 vim.opt.number = true
 vim.opt.incsearch = true
-vim.opt.showmatch = true
+
 vim.opt.hls = true
 vim.opt.smartcase = true
 vim.opt.ignorecase = true
@@ -43,10 +43,6 @@ vim.opt.ruler = false
 
 -- command reload config
 vim.api.nvim_create_user_command("ReloadConfig", "source $MYVIMRC", {})
-
--- Copilot disabled: using Claude Code instead (re-enable in lua/plugins/copilot-lua.lua)
-
-pcall(vim.cmd, "colorscheme dracula")
 
 -- File type detection (single source of truth)
 vim.filetype.add({
