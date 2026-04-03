@@ -1,12 +1,14 @@
-# Neovim Config - Development Guide
+# Neovim Config - Maintenance Guide
 
 ## Architecture
 
+- **Purpose**: Code review workflow — file navigation, LSP go-to-definition, syntax highlighting
 - **Plugin manager**: lazy.nvim with lazy-loading (event/cmd/keys triggers)
 - **Settings**: Single source of truth in `lua/settings.lua` — do NOT duplicate vim options elsewhere
 - **Diagnostics**: Consolidated in `lua/plugins/nvim-lspconfig.lua` — do NOT configure diagnostics in lspsaga or other plugins
 - **Performance**: Runtime-only logic in `lua/performance.lua`, runs BEFORE lazy.nvim loads
 - **Leader key**: `\` (backslash)
+- **No completion engine**: LSP capabilities via `vim.lsp.protocol.make_client_capabilities()`
 
 ## Critical: nvim-treesitter v1.0 API
 
@@ -17,7 +19,6 @@ This config uses nvim-treesitter v1.0+ which has major breaking changes from pre
 - `:TSInstall` and `:TSUpdate` commands were REMOVED — we re-add them in `nvim-treesitter.lua`
 - Highlighting is enabled via `vim.treesitter.start(buf)`, not plugin config
 - Indentation uses `vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"`
-- `nvim-treesitter-textobjects` is INCOMPATIBLE with v1.0 (frozen on old API) — kept disabled
 
 ### Parser compilation
 
@@ -46,33 +47,28 @@ echo "<rev>" > ~/.local/share/nvim/site/parser-info/<lang>.revision
 ## Plugin conventions
 
 - Each plugin has its own file in `lua/plugins/`
-- Disabled plugins use `enabled = false` (kept for reference, not deleted)
 - lazy.nvim `cmd = {}` creates stub commands that trigger plugin load — use this for commands defined inside `config`
 - Use `config = function() ... end` instead of `opts = {}` when the plugin module might not be installed yet (e.g., snacks.nvim)
-- Completion engine is blink.cmp — use `require('blink.cmp').get_lsp_capabilities()` for LSP capabilities
+- All autocmds inside plugin configs MUST use an augroup with `clear = true` to prevent accumulation on `:ReloadConfig`
 
-## Disabled plugins (replaced)
+## Removed plugins (history in git)
 
-| Disabled | Replaced by | Reason |
-|----------|-------------|--------|
-| nvim-cmp | blink.cmp | Rust fuzzy matcher, faster |
-| telescope | fzf-lua | Native fzf, less overhead |
-| alpha-nvim | snacks.nvim dashboard | Unified module |
-| fidget.nvim | snacks.nvim notifier | Unified module |
-| leap.nvim | flash.nvim | Better maintained |
-| nvim-spectre | grug-far.nvim | ast-grep support |
-| copilot.vim | copilot.lua (disabled) | Using Claude Code instead |
-| vim-commentary | Built-in gc/gcc | Neovim 0.10+ native |
-| wilder.nvim | Removed | Stale VimScript |
-| lspkind | blink.cmp built-in | Built-in icon rendering |
-| nvim-treesitter-textobjects | Disabled | Incompatible with treesitter v1.0 |
+| Removed | Reason |
+|---------|--------|
+| blink.cmp, friendly-snippets | No completion needed for code review |
+| conform.nvim | No formatting needed |
+| nvim-autopairs | No coding |
+| nvim-surround | No coding |
+| grug-far.nvim | No search/replace needed |
+| bufferline.nvim | fzf-lua buffers + C-n/C-p suffice |
+| schemastore.nvim | No JSON schema editing |
+| telescope, nvim-cmp, alpha-nvim, fidget, leap, copilot, vim-commentary, wilder, lspkind, nvim-spectre, nvim-treesitter-textobjects | Previously disabled, now deleted |
 
 ## Gotchas
 
 - `lazy-lock.json`: If empty (0 bytes), delete it — causes "commit is nil" errors. lazy.nvim regenerates it on next startup
 - `*.cloning` files in `~/.local/share/nvim/lazy/`: Lock files from interrupted installs — delete them before retrying
-- `conform.nvim` formatter fallback syntax: Use `{ "eslint", "prettierd" }` with `default_format_opts = { stop_after_first = true }` for first-available (nested `{{ }}` syntax was removed)
-- Neovim 0.11 renamed `vim.treesitter.language.ft_to_lang` to `get_lang` — don't pin Telescope to `0.1.x` branch
+- Neovim 0.11 renamed `vim.treesitter.language.ft_to_lang` to `get_lang`
 - `vim.o.ttyfast` is NOT a valid Neovim option — don't set it
 - For buffer size checks, use `vim.api.nvim_buf_get_offset()` for O(1) instead of iterating lines
 - `regexpengine = 0` (auto) is better than `1` (forced old engine)

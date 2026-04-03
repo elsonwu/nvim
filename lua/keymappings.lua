@@ -1,16 +1,16 @@
+local keymap = vim.keymap.set
+
 -- Command mode navigation
-vim.api.nvim_set_keymap("c", "<C-k>", "<Up>", {})
-vim.api.nvim_set_keymap("c", "<C-j>", "<Down>", {})
-vim.api.nvim_set_keymap("c", "<C-h>", "<Left>", {})
-vim.api.nvim_set_keymap("c", "<C-l>", "<Right>", {})
+keymap("c", "<C-k>", "<Up>")
+keymap("c", "<C-j>", "<Down>")
+keymap("c", "<C-h>", "<Left>")
+keymap("c", "<C-l>", "<Right>")
 
 -- Insert mode navigation
-vim.api.nvim_set_keymap("i", "<C-k>", "<Up>", {})
-vim.api.nvim_set_keymap("i", "<C-j>", "<Down>", {})
-vim.api.nvim_set_keymap("i", "<C-h>", "<Left>", {})
-vim.api.nvim_set_keymap("i", "<C-l>", "<Right>", {})
-
-local keymap = vim.keymap.set
+keymap("i", "<C-k>", "<Up>")
+keymap("i", "<C-j>", "<Down>")
+keymap("i", "<C-h>", "<Left>")
+keymap("i", "<C-l>", "<Right>")
 
 -- Buffer management (ww handled by snacks.bufdelete in snacks.lua)
 keymap("n", "<leader>wh", ":NvimTreeToggle<CR>", { silent = true })
@@ -20,17 +20,6 @@ keymap("n", "<C-n>", ":bnext<CR>", { silent = true })
 keymap("n", "<C-p>", ":bprev<CR>", { silent = true })
 keymap("x", "<", "<gv", { noremap = true, silent = true })
 keymap("x", ">", ">gv", { noremap = true, silent = true })
-
--- Search & replace: <leader>S handled by grug-far.lua keys
--- Fuzzy finder: <leader>sf/ss/sb/sg/sw/sh/sd/sD/sr/sc handled by fzf-lua.lua keys
-
--- Format
-keymap(
-  "n",
-  "<leader>fmt",
-  ':lua require("conform").format({ async = true, lsp_format = true })<CR>',
-  { noremap = true, silent = true }
-)
 
 -- LSP (via Lspsaga)
 keymap("n", "gd", "<cmd>Lspsaga goto_definition<CR>", { noremap = true, silent = true })
@@ -63,5 +52,3 @@ keymap("n", "<leader>p", function()
     end, 100)
   end
 end, { noremap = true, silent = true, desc = "Smart paste (disables syntax temporarily)" })
-
--- Copilot disabled: using Claude Code instead (re-enable in copilot-lua.lua if needed)

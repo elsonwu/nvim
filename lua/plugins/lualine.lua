@@ -39,8 +39,8 @@ return {
 				section_separators = { left = "", right = "" },
 				refresh = {
 					statusline = 250,
-					tabline = 250,
-					winbar = 250,
+					tabline = 1000,
+					winbar = 1000,
 				},
 				globalstatus = true,
 			},
