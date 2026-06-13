@@ -1,5 +1,5 @@
 return {
-	"dracula/vim",
+	"Mofiqul/dracula.nvim",
 	lazy = false,
 	priority = 900,
 	name = "dracula",

@@ -24,25 +24,12 @@ function M.setup()
 
   local augroup = vim.api.nvim_create_augroup("performance_opts", { clear = true })
 
-  -- Optimize search highlighting
-  vim.api.nvim_create_autocmd("CmdlineEnter", {
-    pattern = "/,\\?",
-    command = "set hlsearch",
-    group = augroup,
-  })
-  vim.api.nvim_create_autocmd("CmdlineLeave", {
-    pattern = "/,\\?",
-    command = "set nohlsearch",
-    group = augroup,
-  })
-
   -- Special handling for JSON files with large arrays
   vim.api.nvim_create_autocmd("FileType", {
     pattern = { "json", "jsonc" },
     callback = function()
       local buf = vim.api.nvim_get_current_buf()
       vim.bo[buf].synmaxcol = 500
-      vim.bo[buf].indentexpr = ""
     end,
     group = augroup,
   })

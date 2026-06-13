@@ -1,8 +1,7 @@
 return {
 	"nvim-treesitter/nvim-treesitter",
-	event = { "BufReadPost", "BufNewFile" },
-	cmd = { "TSInstall", "TSUpdate" },
-	build = ":TSUpdate",
+	lazy = false,
+	priority = 800, -- Load right after colorscheme (priority 900)
 	config = function()
 		require("nvim-treesitter").setup({})
 		local augroup = vim.api.nvim_create_augroup("nvim_treesitter_custom", { clear = true })
@@ -63,7 +62,10 @@ return {
 			if vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].filetype ~= "" then
 				local ft = vim.bo[buf].filetype
 				if not vim.tbl_contains({ "help", "alpha", "dashboard", "neo-tree", "Trouble", "lazy", "mason" }, ft) then
-					pcall(vim.treesitter.start, buf)
+					local ok, stats = pcall(vim.uv.fs_stat, vim.api.nvim_buf_get_name(buf))
+					if not (ok and stats and stats.size > 100 * 1024) and vim.api.nvim_buf_line_count(buf) <= 5000 then
+						pcall(vim.treesitter.start, buf)
+					end
 				end
 			end
 		end

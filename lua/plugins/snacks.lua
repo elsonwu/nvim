@@ -49,6 +49,22 @@ return {
       input = { enabled = true },
       -- Scope detection
       scope = { enabled = true },
+      -- File explorer (replaces nvim-tree)
+      explorer = { enabled = true },
+      -- Picker: remap explorer's o from system-open to open-in-nvim
+      picker = {
+        sources = {
+          explorer = {
+            win = {
+              list = {
+                keys = {
+                  ["o"] = "confirm",
+                },
+              },
+            },
+          },
+        },
+      },
       -- Indent guides
       indent = {
         enabled = true,

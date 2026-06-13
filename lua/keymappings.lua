@@ -12,30 +12,54 @@ keymap("i", "<C-j>", "<Down>")
 keymap("i", "<C-h>", "<Left>")
 keymap("i", "<C-l>", "<Right>")
 
--- Buffer management (ww handled by snacks.bufdelete in snacks.lua)
-keymap("n", "<leader>wh", ":NvimTreeToggle<CR>", { silent = true })
-keymap("n", "<leader>ff", ":NvimTreeFindFileToggle<CR>", { silent = true })
+-- File explorer (snacks; ww handled by snacks.bufdelete in snacks.lua)
+keymap("n", "<leader>wh", function() Snacks.explorer.open() end, { silent = true, desc = "Toggle explorer" })
+keymap("n", "<leader>ff", function() Snacks.explorer.reveal() end, { silent = true, desc = "Reveal file in explorer" })
 
+-- Buffer navigation
 keymap("n", "<C-n>", ":bnext<CR>", { silent = true })
 keymap("n", "<C-p>", ":bprev<CR>", { silent = true })
-keymap("x", "<", "<gv", { noremap = true, silent = true })
-keymap("x", ">", ">gv", { noremap = true, silent = true })
+keymap("x", "<", "<gv", { silent = true })
+keymap("x", ">", ">gv", { silent = true })
 
--- LSP (via Lspsaga)
-keymap("n", "gd", "<cmd>Lspsaga goto_definition<CR>", { noremap = true, silent = true })
-keymap("n", "<leader>rn", "<cmd>Lspsaga rename<CR>", { noremap = true, silent = true })
-keymap("n", "<leader>h", "<cmd>Lspsaga peek_definition<CR>", { noremap = true, silent = true })
-keymap("n", "<leader>gt", "<cmd>Lspsaga peek_type_definition<CR>", { noremap = true, silent = true })
-keymap("n", "<leader>gr", "<cmd>Lspsaga finder<CR>", { noremap = true, silent = true })
-keymap("n", "<leader>gE", "<cmd>Lspsaga show_workspace_diagnostics<CR>", { noremap = true, silent = true })
-keymap("n", "<leader>ge", "<cmd>Lspsaga show_buf_diagnostics<CR>", { noremap = true, silent = true })
-keymap("n", "<leader>ca", "<cmd>Lspsaga code_action<CR>", { noremap = true, silent = true })
-keymap("n", "[d", "<cmd>Lspsaga diagnostic_jump_prev<CR>", { noremap = true, silent = true })
-keymap("n", "]d", "<cmd>Lspsaga diagnostic_jump_next<CR>", { noremap = true, silent = true })
-keymap("n", "K", "<cmd>Lspsaga hover_doc<CR>", { noremap = true, silent = true })
+-- Clear search highlights
+keymap("n", "<Esc>", "<cmd>nohlsearch<CR>", { silent = true })
+
+-- LSP (native Neovim 0.11)
+keymap("n", "gd", vim.lsp.buf.definition, { silent = true, desc = "Go to definition" })
+keymap("n", "<leader>rn", vim.lsp.buf.rename, { silent = true, desc = "Rename" })
+keymap("n", "<leader>h", function() require("fzf-lua").lsp_definitions() end, { silent = true, desc = "Peek definition" })
+keymap("n", "<leader>gt", function() require("fzf-lua").lsp_typedefs() end, { silent = true, desc = "Peek type definition" })
+keymap("n", "<leader>gr", function() require("fzf-lua").lsp_finder() end, { silent = true, desc = "LSP finder" })
+keymap("n", "<leader>gE", function() require("fzf-lua").diagnostics_workspace() end, { silent = true, desc = "Workspace diagnostics" })
+keymap("n", "<leader>ge", function() require("fzf-lua").diagnostics_document() end, { silent = true, desc = "Buffer diagnostics" })
+keymap("n", "<leader>ca", vim.lsp.buf.code_action, { silent = true, desc = "Code action" })
+keymap("n", "[d", function() vim.diagnostic.jump({ count = -1, float = true }) end, { silent = true, desc = "Prev diagnostic" })
+keymap("n", "]d", function() vim.diagnostic.jump({ count = 1, float = true }) end, { silent = true, desc = "Next diagnostic" })
+keymap("n", "K", vim.lsp.buf.hover, { silent = true, desc = "Hover doc" })
+
+-- Quit all
+keymap("n", "<leader>qq", "<cmd>qa<CR>", { silent = true, desc = "Quit all" })
 
 -- Git
-keymap("n", "<leader>bb", ":Gitsigns blame_line<CR>", { noremap = true, silent = true })
+keymap("n", "<leader>bb", ":Gitsigns blame_line<CR>", { silent = true })
+
+-- Format buffer (filetype-aware: jq for JSON, LSP otherwise)
+keymap("n", "<leader>fmt", function()
+  local ft = vim.bo.filetype
+  local view = vim.fn.winsaveview()
+  local cli = ({ json = "jq .", jsonc = "jq ." })[ft]
+  if cli and vim.fn.executable(vim.split(cli, " ")[1]) == 1 then
+    vim.cmd("silent %!" .. cli)
+    if vim.v.shell_error ~= 0 then
+      vim.cmd("silent undo")
+      vim.notify(cli .. " failed (invalid " .. ft .. "?)", vim.log.levels.ERROR)
+    end
+  else
+    vim.lsp.buf.format({ timeout_ms = 2000 })
+  end
+  vim.fn.winrestview(view)
+end, { silent = true, desc = "Format buffer" })
 
 -- Smart paste for large content (temporarily disables syntax)
 keymap("n", "<leader>p", function()
@@ -51,4 +75,4 @@ keymap("n", "<leader>p", function()
       vim.notify("Paste complete: syntax enabled", vim.log.levels.INFO)
     end, 100)
   end
-end, { noremap = true, silent = true, desc = "Smart paste (disables syntax temporarily)" })
+end, { silent = true, desc = "Smart paste (disables syntax temporarily)" })

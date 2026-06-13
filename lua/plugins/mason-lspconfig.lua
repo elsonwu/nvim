@@ -1,7 +1,6 @@
 return {
-  lazy = true,
   "williamboman/mason-lspconfig.nvim",
-  event = "VeryLazy",
+  event = { "BufReadPre", "BufNewFile" },
   dependencies = { "williamboman/mason.nvim", "neovim/nvim-lspconfig" },
   config = function()
     local capabilities = vim.lsp.protocol.make_client_capabilities()
@@ -14,6 +13,16 @@ return {
         function(server_name)
           require("lspconfig")[server_name].setup({
             capabilities = capabilities,
+          })
+        end,
+
+        -- jdtls requires Java 21; inject JAVA_HOME without changing system Java
+        ["jdtls"] = function()
+          require("lspconfig").jdtls.setup({
+            capabilities = capabilities,
+            cmd_env = {
+              JAVA_HOME = "/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home",
+            },
           })
         end,
         
