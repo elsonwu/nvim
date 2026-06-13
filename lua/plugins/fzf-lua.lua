@@ -7,7 +7,16 @@ return {
     { "<leader>ss", "<cmd>FzfLua live_grep<CR>", desc = "Live grep" },
     { "<leader>sb", "<cmd>FzfLua buffers<CR>", desc = "Search buffers" },
     { "<leader>sg", "<cmd>FzfLua git_status<CR>", desc = "Git status" },
-    { "<leader>sw", "<cmd>FzfLua grep_cword<CR>", desc = "Grep word under cursor" },
+    { "<leader>sw", function() require("fzf-lua").live_grep({ search = vim.fn.expand("<cword>") }) end, desc = "Live grep word under cursor (editable)" },
+    { "<leader>sP", function()
+        vim.ui.input({ prompt = "Grep in dir: ", completion = "dir", default = vim.fn.expand("%:p:h") }, function(dir)
+          if dir and dir ~= "" then require("fzf-lua").live_grep({ cwd = dir }) end
+        end)
+      end, desc = "Live grep in dir" },
+    { "<leader>sw", mode = "x", function()
+        vim.cmd('noau normal! "vy"')
+        require("fzf-lua").live_grep({ search = vim.fn.getreg("v") })
+      end, desc = "Live grep visual selection (editable)" },
     { "<leader>sh", "<cmd>FzfLua help_tags<CR>", desc = "Help tags" },
     { "<leader>sd", "<cmd>FzfLua diagnostics_document<CR>", desc = "Document diagnostics" },
     { "<leader>sD", "<cmd>FzfLua diagnostics_workspace<CR>", desc = "Workspace diagnostics" },

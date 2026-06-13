@@ -22,7 +22,7 @@ vim.opt.timeoutlen = 300             -- Faster key sequence timeout
 vim.opt.ttimeoutlen = 10             -- Faster escape sequence timeout
 vim.opt.redrawtime = 1500            -- Limit redraw time for complex syntax
 vim.opt.regexpengine = 0             -- Auto-select regex engine (better than forcing old engine)
-vim.opt.lazyredraw = true            -- Don't redraw during macros/commands
+vim.opt.lazyredraw = false            -- Allow immediate redraws for responsive UI
 vim.opt.maxmempattern = 20000        -- Increase memory for pattern matching (fixes E363 for JSON)
 vim.opt.backup = false               -- Disable backup files
 vim.opt.writebackup = false          -- Disable backup before overwrite
@@ -43,6 +43,15 @@ vim.opt.ruler = false
 
 -- command reload config
 vim.api.nvim_create_user_command("ReloadConfig", "source $MYVIMRC", {})
+
+-- When launched with a single directory arg (`nvim ~/www/axd`), cd into it so
+-- fzf-lua, grep, and LSP root detection use that directory instead of the shell's pwd.
+if #vim.fn.argv() == 1 then
+  local arg = vim.fn.argv(0)
+  if vim.fn.isdirectory(arg) == 1 then
+    vim.cmd.cd(vim.fn.fnameescape(arg))
+  end
+end
 
 -- File type detection (single source of truth)
 vim.filetype.add({

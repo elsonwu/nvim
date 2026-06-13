@@ -1,7 +1,6 @@
 return {
 	"nvim-lualine/lualine.nvim",
 	event = "VeryLazy",
-	lazy = true,
 	dependencies = { "nvim-tree/nvim-web-devicons", opt = true },
 	config = function()
 		local colors = {
@@ -47,7 +46,13 @@ return {
 			sections = {
 				lualine_a = { { "mode", separator = { left = "" }, right_padding = 2 } },
 				lualine_b = { "filename", "branch" },
-				lualine_c = { "%=" },
+				lualine_c = {
+				"%=",
+				{
+					function() return vim.lsp.status() end,
+					cond = function() return vim.lsp.status() ~= "" end,
+				},
+			},
 				lualine_x = {},
 				lualine_y = { "filetype", "progress" },
 				lualine_z = { { "location", separator = { right = "" }, left_padding = 2 } },
