@@ -5,7 +5,9 @@
 - **Purpose**: Code review workflow — file navigation, LSP go-to-definition, syntax highlighting
 - **Plugin manager**: lazy.nvim with lazy-loading (event/cmd/keys triggers)
 - **Settings**: Single source of truth in `lua/settings.lua` — do NOT duplicate vim options elsewhere
-- **Diagnostics**: Consolidated in `lua/plugins/nvim-lspconfig.lua` — do NOT configure diagnostics in lspsaga or other plugins
+- **Diagnostics**: Consolidated in `lua/plugins/nvim-lspconfig.lua` — do NOT configure diagnostics in other plugins
+- **LSP UI**: Native Neovim 0.11 LSP — no lspsaga. Keymaps use `vim.lsp.buf.*`, `vim.diagnostic.*`, and fzf-lua for multi-result views
+- **File explorer**: snacks.nvim explorer (`Snacks.explorer`) — no nvim-tree
 - **Performance**: Runtime-only logic in `lua/performance.lua`, runs BEFORE lazy.nvim loads
 - **Leader key**: `\` (backslash)
 - **No completion engine**: LSP capabilities via `vim.lsp.protocol.make_client_capabilities()`
@@ -55,6 +57,8 @@ echo "<rev>" > ~/.local/share/nvim/site/parser-info/<lang>.revision
 
 | Removed | Reason |
 |---------|--------|
+| lspsaga.nvim | Replaced by native Neovim 0.11 LSP + fzf-lua; same keymaps |
+| nvim-tree.lua | Replaced by snacks.nvim explorer; same keymaps (`\wh`, `\ff`) |
 | blink.cmp, friendly-snippets | No completion needed for code review |
 | conform.nvim | No formatting needed |
 | nvim-autopairs | No coding |
@@ -72,6 +76,9 @@ echo "<rev>" > ~/.local/share/nvim/site/parser-info/<lang>.revision
 - `vim.o.ttyfast` is NOT a valid Neovim option — don't set it
 - For buffer size checks, use `vim.api.nvim_buf_get_offset()` for O(1) instead of iterating lines
 - `regexpengine = 0` (auto) is better than `1` (forced old engine)
+- jdtls requires Java 21+ — `cmd_env = { JAVA_HOME = "/opt/homebrew/opt/openjdk@21/..." }` in mason-lspconfig handler keeps system Java untouched
+- snacks.nvim explorer keymap overrides go under `picker.sources.explorer.win.list.keys`, NOT `explorer.win.list.keys`
+- `mason-lspconfig` must load on `BufReadPre` (not `VeryLazy`) — otherwise lspconfig servers aren't configured before `FileType` fires and LSP attaches late
 
 ## File locations
 
@@ -80,7 +87,7 @@ echo "<rev>" > ~/.local/share/nvim/site/parser-info/<lang>.revision
 - Plugin data: `~/.local/share/nvim/lazy/`
 - Parser binaries: `~/.local/share/nvim/site/parser/`
 - State/logs: `~/.local/state/nvim/`
-- Git repo: `https://github.com/elsonwu/vim.git` (branch: `lsp`)
+- Git repo: `https://github.com/elsonwu/nvim.git` (branch: `lsp`)
 
 ## Languages supported
 
