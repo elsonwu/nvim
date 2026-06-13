@@ -1,6 +1,6 @@
 # Neovim Configuration
 
-A lightweight, performance-optimized Neovim configuration for **code review**. Built with [lazy.nvim](https://github.com/folke/lazy.nvim) for fast startup and 14 carefully chosen plugins.
+A lightweight, performance-optimized Neovim configuration for **code review**. Built with [lazy.nvim](https://github.com/folke/lazy.nvim) for fast startup and 12 carefully chosen plugins.
 
 **Leader key:** `\` (backslash)
 
@@ -8,15 +8,13 @@ A lightweight, performance-optimized Neovim configuration for **code review**. B
 
 | Plugin | Purpose |
 |--------|---------|
-| [snacks.nvim](https://github.com/folke/snacks.nvim) | Dashboard, notifications, bigfile handling, indent guides |
+| [snacks.nvim](https://github.com/folke/snacks.nvim) | Dashboard, file explorer, notifications, bigfile handling, indent guides |
 | [fzf-lua](https://github.com/ibhagwan/fzf-lua) | Fuzzy finder (files, grep, buffers, git) |
 | [flash.nvim](https://github.com/folke/flash.nvim) | Jump to any location by typing characters |
-| [nvim-tree](https://github.com/nvim-tree/nvim-tree.lua) | File explorer (floating window) |
 | [oil.nvim](https://github.com/stevearc/oil.nvim) | Edit filesystem like a buffer |
 | [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) | LSP client (go-to-definition, hover, diagnostics) |
 | [mason.nvim](https://github.com/williamboman/mason.nvim) | LSP server installer |
 | [mason-lspconfig](https://github.com/williamboman/mason-lspconfig.nvim) | Bridge between mason and lspconfig |
-| [lspsaga.nvim](https://github.com/nvimdev/lspsaga.nvim) | LSP UI (peek definition, finder, rename) |
 | [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter) | Syntax highlighting and indentation |
 | [gitsigns.nvim](https://github.com/lewis6991/gitsigns.nvim) | Git signs in gutter, blame |
 | [lualine.nvim](https://github.com/nvim-lualine/lualine.nvim) | Statusline |
@@ -26,7 +24,7 @@ A lightweight, performance-optimized Neovim configuration for **code review**. B
 ### LSP Servers (auto-installed via Mason)
 
 - **vtsls** — TypeScript/JavaScript
-- **jdtls** — Java
+- **jdtls** — Java (requires Java 21+)
 - **yamlls** — YAML
 - **lua_ls** — Lua
 - **eslint** — ESLint (auto-detects config presence)
@@ -39,8 +37,8 @@ A lightweight, performance-optimized Neovim configuration for **code review**. B
 
 | Key | Action |
 |-----|--------|
-| `\wh` | Toggle file tree (NvimTree) |
-| `\ff` | Find current file in tree |
+| `\wh` | Toggle file explorer (snacks) |
+| `\ff` | Reveal current file in explorer |
 | `-` | Open parent directory (Oil) |
 | `\sf` | Find files (respects .gitignore) |
 | `\sF` | Find ALL files (includes gitignored) |
@@ -68,9 +66,9 @@ Inside fzf-lua picker:
 |-----|--------|
 | `gd` | Go to definition |
 | `K` | Hover documentation |
-| `\h` | Peek definition (inline preview) |
+| `\h` | Peek definition (fzf-lua preview) |
 | `\gt` | Peek type definition |
-| `\gr` | Find references (Lspsaga finder) |
+| `\gr` | Find all references (fzf-lua) |
 | `\rn` | Rename symbol |
 | `\ca` | Code action |
 | `\ge` | Buffer diagnostics |
@@ -102,9 +100,11 @@ Inside fzf-lua picker:
 
 | Key | Action |
 |-----|--------|
+| `\qq` | Quit all |
 | `\p` | Smart paste (disables syntax temporarily for speed) |
 | `\sh` | Help tags |
 | `\nn` | Notification history |
+| `<Esc>` | Clear search highlights |
 | `<` / `>` (visual) | Indent and reselect |
 | `Ctrl-h/j/k/l` | Arrow keys in insert/command mode |
 | `gc` / `gcc` | Comment (built-in Neovim 0.10+) |
@@ -143,7 +143,6 @@ Inside fzf-lua picker:
 - **Large file handling**: snacks.bigfile disables heavy features for files >256KB
 - **Treesitter guards**: Skips highlighting for files >100KB or >5000 lines
 - **LSP guards**: Auto-detaches LSP for files >1MB
-- **LSP debouncing**: 150ms debounce on background requests (definitions/references are instant)
 - **Disabled built-in plugins**: 25+ unused Vim plugins disabled at startup
 - **Optimized search**: ripgrep for grep, fd for file finding
 - **UI minimalism**: No cursor line, no ruler, no showcmd for faster rendering
@@ -165,15 +164,13 @@ Inside fzf-lua picker:
       flash.lua                     -- Quick jump motions
       fzf-lua.lua                   -- Fuzzy finder
       gitsigns.lua                  -- Git integration
-      lspsaga.lua                   -- LSP UI
       lualine.lua                   -- Status line
       mason.lua                     -- LSP installer
       mason-lspconfig.lua           -- Mason + LSP bridge
       nvim-lspconfig.lua            -- LSP configuration
-      nvim-tree.lua                 -- File explorer
       nvim-treesitter.lua           -- Syntax highlighting
       oil.lua                       -- Filesystem editing
-      snacks.lua                    -- Multi-module utility
+      snacks.lua                    -- Multi-module utility (explorer, dashboard, etc.)
 ```
 
 ---
@@ -195,10 +192,11 @@ To find repo/revision for a language: `:lua print(vim.inspect(require("nvim-tree
 
 ## Requirements
 
-- Neovim >= 0.10
+- Neovim >= 0.11
 - [ripgrep](https://github.com/BurntSushi/ripgrep) (`rg`) — for grep operations
 - [fd](https://github.com/sharkdp/fd) — for file finding
 - [fzf](https://github.com/junegunn/fzf) — for fuzzy finding
 - [tree-sitter](https://github.com/tree-sitter/tree-sitter) CLI (`brew install tree-sitter-cli`) — for compiling parsers
 - A [Nerd Font](https://www.nerdfonts.com/) — for icons
 - Node.js — for LSP servers
+- Java 21+ — for jdtls (Java LSP)
