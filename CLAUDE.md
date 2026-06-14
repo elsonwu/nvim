@@ -76,7 +76,7 @@ echo "<rev>" > ~/.local/share/nvim/site/parser-info/<lang>.revision
 - `vim.o.ttyfast` is NOT a valid Neovim option — don't set it
 - For buffer size checks, use `vim.api.nvim_buf_get_offset()` for O(1) instead of iterating lines
 - `regexpengine = 0` (auto) is better than `1` (forced old engine)
-- jdtls requires Java 21+ — `cmd_env = { JAVA_HOME = "/opt/homebrew/opt/openjdk@21/..." }` in mason-lspconfig handler keeps system Java untouched
+- jdtls requires Java 21+ — use `vim.lsp.config("jdtls", { cmd_env = { JAVA_HOME = "/opt/homebrew/opt/openjdk@21/..." } })` BEFORE `mason-lspconfig.setup()`. The old `handlers` table was removed from mason-lspconfig; `cmd_env` set there was silently ignored.
 - snacks.nvim explorer keymap overrides go under `picker.sources.explorer.win.list.keys`, NOT `explorer.win.list.keys`
 - `mason-lspconfig` must load on `BufReadPre` (not `VeryLazy`) — otherwise lspconfig servers aren't configured before `FileType` fires and LSP attaches late
 

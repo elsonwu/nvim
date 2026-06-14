@@ -81,8 +81,8 @@ Inside fzf-lua picker:
 
 | Key | Action |
 |-----|--------|
-| `s` | Flash jump — type characters to jump to any match |
-| `S` | Flash treesitter — select treesitter node |
+| `gs` | Flash jump — type characters to jump to any match |
+| `gS` | Flash treesitter — select treesitter node |
 | `r` | Remote flash (operator-pending mode) |
 | `]]` | Jump to next LSP reference |
 | `[[` | Jump to previous LSP reference |

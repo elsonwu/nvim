@@ -50,19 +50,47 @@ return {
 			return vim.lsp.handlers.signature_help(err, result, ctx, config)
 		end
 
-		-- Disable LSP for very large files (>1MB) on attach — LspAttach avoids the
-		-- BufReadPre+schedule race where LSP starts indexing before the deferred detach runs
-		local bigfile_augroup = vim.api.nvim_create_augroup("lsp_bigfile_guard", { clear = true })
+		local lsp_augroup = vim.api.nvim_create_augroup("lsp_events", { clear = true })
+
+		-- Notify on attach so you know the server connected
 		vim.api.nvim_create_autocmd("LspAttach", {
-			group = bigfile_augroup,
+			group = lsp_augroup,
 			callback = function(ev)
-				local bufnr = ev.buf
-				local buf_name = vim.api.nvim_buf_get_name(bufnr)
+				local client = vim.lsp.get_client_by_id(ev.data.client_id)
+				if not client then return end
+
+				-- Detach from very large files (>1MB)
+				local buf_name = vim.api.nvim_buf_get_name(ev.buf)
 				local ok, stats = pcall(vim.uv.fs_stat, buf_name)
 				if ok and stats and stats.size > 1024 * 1024 then
-					vim.lsp.buf_detach_client(bufnr, ev.data.client_id)
-					vim.diagnostic.enable(false, { bufnr = bufnr })
+					vim.lsp.buf_detach_client(ev.buf, ev.data.client_id)
+					vim.diagnostic.enable(false, { bufnr = ev.buf })
+					return
 				end
+
+				vim.notify(client.name .. " attached", vim.log.levels.INFO)
+			end,
+		})
+
+		-- Show LSP progress as notifications (debounced per client to reduce noise)
+		local progress_timers = {}
+		vim.api.nvim_create_autocmd("LspProgress", {
+			group = lsp_augroup,
+			callback = function(ev)
+				local id = ev.data.client_id
+				if progress_timers[id] then
+					progress_timers[id]:stop()
+					progress_timers[id]:close()
+				end
+				progress_timers[id] = vim.uv.new_timer()
+				progress_timers[id]:start(200, 0, vim.schedule_wrap(function()
+					progress_timers[id]:close()
+					progress_timers[id] = nil
+					local msg = vim.lsp.status()
+					if msg ~= "" then
+						vim.notify(msg, vim.log.levels.INFO)
+					end
+				end))
 			end,
 		})
 	end,
