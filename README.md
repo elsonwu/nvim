@@ -41,7 +41,7 @@ A lightweight, performance-optimized Neovim configuration for **code review**. B
 | `\ff` | Reveal current file in explorer |
 | `-` | Open parent directory (Oil) |
 | `\sf` | Find files (respects .gitignore) |
-| `\sF` | Find ALL files (includes gitignored) |
+| `\SF` | Find ALL files (includes gitignored) |
 | `\sb` | Search open buffers |
 | `Ctrl-n` | Next buffer |
 | `Ctrl-p` | Previous buffer |
