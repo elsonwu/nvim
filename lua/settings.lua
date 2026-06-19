@@ -44,6 +44,19 @@ vim.opt.ruler = false
 -- command reload config
 vim.api.nvim_create_user_command("ReloadConfig", "source $MYVIMRC", {})
 
+-- Copy file path to clipboard
+vim.keymap.set("n", "<leader>yp", function()
+  local path = vim.fn.expand("%:p")
+  vim.fn.setreg("+", path)
+  vim.notify(path, vim.log.levels.INFO)
+end, { desc = "Yank absolute file path" })
+
+vim.keymap.set("n", "<leader>yr", function()
+  local path = vim.fn.expand("%:.")
+  vim.fn.setreg("+", path)
+  vim.notify(path, vim.log.levels.INFO)
+end, { desc = "Yank relative file path" })
+
 -- When launched with a single directory arg (`nvim ~/www/axd`), cd into it so
 -- fzf-lua, grep, and LSP root detection use that directory instead of the shell's pwd.
 if #vim.fn.argv() == 1 then
