@@ -63,6 +63,11 @@ return {
               list = {
                 keys = {
                   ["o"] = "confirm",
+                  -- `l`/`h` scroll the tree right/left (native zL/zH) instead of
+                  -- opening/collapsing, so deep-tree filenames come into view.
+                  -- `o` opens files and toggles dirs (expand/collapse).
+                  ["l"] = function() vim.cmd("normal! zL") end,
+                  ["h"] = function() vim.cmd("normal! zH") end,
                   -- `/` launches fzf-lua files (respects .gitignore, same as \sf)
                   -- scoped to the focused node's dir, instead of snacks' fd search
                   -- that ignores .gitignore. `i` still opens the native filter.
