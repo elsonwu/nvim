@@ -55,6 +55,10 @@ return {
       picker = {
         sources = {
           explorer = {
+            hidden = true,   -- show dotfiles by default (H to toggle)
+            ignored = true,  -- show gitignored files by default (I to toggle)
+            -- exclude heavy build artifacts to keep git-ignored scanning fast
+            exclude = { ".git", "node_modules", "build", "dist", "target", ".gradle" },
             win = {
               list = {
                 keys = {
