@@ -42,7 +42,7 @@ return {
       },
     },
     files = {
-      fd_opts = "--type f --hidden --exclude .git --exclude node_modules --exclude target --exclude build --exclude dist --max-depth 8",
+      fd_opts = "--type f --hidden --exclude .git --exclude node_modules --exclude target --exclude build --exclude dist",
       follow = true,
     },
     grep = {
