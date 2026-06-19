@@ -66,6 +66,21 @@ if #vim.fn.argv() == 1 then
   end
 end
 
+-- Indent-based folding for common file types
+vim.api.nvim_create_autocmd("FileType", {
+  group = vim.api.nvim_create_augroup("indent_fold", { clear = true }),
+  pattern = {
+    "yaml", "json", "lua",
+    "javascript", "typescript", "javascriptreact", "typescriptreact",
+    "kotlin", "swift", "java",
+    "html", "css", "scss",
+    "python", "toml", "vim",
+  },
+  callback = function()
+    vim.opt_local.foldmethod = "indent"
+  end,
+})
+
 -- File type detection (single source of truth)
 vim.filetype.add({
   extension = {
