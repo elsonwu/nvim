@@ -39,7 +39,9 @@ return {
 
     require("mason-lspconfig").setup({
       automatic_installation = true,
-      ensure_installed = { "vtsls", "jdtls", "yamlls", "lua_ls", "eslint" },
+      -- tsgo = TypeScript 7 native (Go) LSP, replaces vtsls. Mason-managed, so
+      -- automatic_enable starts it like the others. Much faster project load.
+      ensure_installed = { "tsgo", "jdtls", "yamlls", "lua_ls", "eslint" },
     })
   end,
 }

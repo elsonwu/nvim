@@ -93,4 +93,4 @@ echo "<rev>" > ~/.local/share/nvim/site/parser-info/<lang>.revision
 
 TypeScript, JavaScript, TSX, JSON, YAML, Lua, Vim, Vimdoc, Markdown, Swift, Kotlin (treesitter parsers installed)
 
-LSP servers (via Mason): vtsls (TS/JS), jdtls (Java), yamlls (YAML), lua_ls (Lua), eslint (auto-detect)
+LSP servers (via Mason): tsgo (TS/JS — TypeScript 7 native preview), jdtls (Java), yamlls (YAML), lua_ls (Lua), eslint (auto-detect)
