@@ -59,6 +59,17 @@ return {
               list = {
                 keys = {
                   ["o"] = "confirm",
+                  -- `/` launches fzf-lua files (respects .gitignore, same as \sf)
+                  -- scoped to the focused node's dir, instead of snacks' fd search
+                  -- that ignores .gitignore. `i` still opens the native filter.
+                  ["/"] = function(_, item)
+                    local dir = vim.fn.getcwd()
+                    if item and item.file and item.file ~= "" then
+                      dir = vim.fn.isdirectory(item.file) == 1 and item.file
+                        or vim.fn.fnamemodify(item.file, ":h")
+                    end
+                    require("fzf-lua").files({ cwd = dir })
+                  end,
                 },
               },
             },
