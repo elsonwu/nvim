@@ -55,10 +55,45 @@ return {
       picker = {
         sources = {
           explorer = {
+            hidden = true,   -- show dotfiles by default (H to toggle)
+            ignored = true,  -- show gitignored files by default (I to toggle)
+            -- exclude heavy build artifacts to keep git-ignored scanning fast
+            exclude = { ".git", "node_modules", "build", "dist", "target", ".gradle" },
             win = {
               list = {
                 keys = {
                   ["o"] = "confirm",
+                  -- `l`/`h` scroll the tree right/left (native zL/zH) instead of
+                  -- opening/collapsing, so deep-tree filenames come into view.
+                  -- `o` opens files and toggles dirs (expand/collapse).
+                  ["l"] = function() vim.cmd("normal! zL") end,
+                  ["h"] = function() vim.cmd("normal! zH") end,
+                  -- `/` launches fzf-lua files (respects .gitignore, same as \sf)
+                  -- scoped to the focused node's dir, instead of snacks' fd search
+                  -- that ignores .gitignore. `i` still opens the native filter.
+                  ["/"] = function(_, item)
+                    local dir = vim.fn.getcwd()
+                    if item and item.file and item.file ~= "" then
+                      dir = vim.fn.isdirectory(item.file) == 1 and item.file
+                        or vim.fn.fnamemodify(item.file, ":h")
+                    end
+                    require("fzf-lua").files({ cwd = dir })
+                  end,
+                  ["yp"] = function(picker, item)
+                    local path = item and item.file or ""
+                    if path ~= "" then
+                      vim.fn.setreg("+", path)
+                      vim.notify(path, vim.log.levels.INFO)
+                    end
+                  end,
+                  ["yr"] = function(picker, item)
+                    local path = item and item.file or ""
+                    if path ~= "" then
+                      path = vim.fn.fnamemodify(path, ":.")
+                      vim.fn.setreg("+", path)
+                      vim.notify(path, vim.log.levels.INFO)
+                    end
+                  end,
                 },
               },
             },

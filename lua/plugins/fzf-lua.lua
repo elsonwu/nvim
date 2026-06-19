@@ -22,10 +22,15 @@ return {
     { "<leader>sD", "<cmd>FzfLua diagnostics_workspace<CR>", desc = "Workspace diagnostics" },
     { "<leader>sr", "<cmd>FzfLua resume<CR>", desc = "Resume last search" },
     { "<leader>sc", "<cmd>FzfLua git_commits<CR>", desc = "Git commits" },
-    { "<leader>sF", function() require("fzf-lua").files({ fd_opts = "--type f --hidden --no-ignore --exclude .git" }) end, desc = "Find files (include ignored)" },
+    { "<leader>SF", function() require("fzf-lua").files({ fd_opts = "--type f --hidden --no-ignore --exclude .git" }) end, desc = "Find files (include ignored)" },
     { "<leader>sS", function() require("fzf-lua").live_grep({ rg_opts = "--column --line-number --no-heading --color=always --smart-case --hidden --no-ignore -g '!.git/'" }) end, desc = "Grep all (include ignored)" },
   },
   opts = {
+    -- Show filename FIRST, dir dimmed + trailing (VSCode-style). Without this,
+    -- fzf-lua leads with the full relative path; deep trees (e.g. Java
+    -- src/main/java/.../datasources/) share an identical prefix and the unique
+    -- filename gets truncated off-screen. Applies to files/grep/LSP/lsp_finder.
+    formatter = "path.filename_first",
     winopts = {
       height = 0.85,
       width = 0.85,
@@ -37,10 +42,14 @@ return {
       },
     },
     files = {
-      fd_opts = "--type f --hidden --exclude .git --exclude node_modules --exclude target --exclude build --exclude dist --max-depth 8",
+      fd_opts = "--type f --hidden --exclude .git --exclude node_modules --exclude target --exclude build --exclude dist",
       follow = true,
     },
     grep = {
+      -- grep source hard-defaults formatter=false, overriding the global one,
+      -- so live_grep would otherwise show the full path with the filename
+      -- truncated. Set it explicitly to lead with the filename.
+      formatter = "path.filename_first",
       rg_opts = "--hidden --column --line-number --no-heading --color=always --smart-case -g '!.git' -g '!node_modules' --max-count 300",
     },
     buffers = {

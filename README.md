@@ -23,7 +23,7 @@ A lightweight, performance-optimized Neovim configuration for **code review**. B
 
 ### LSP Servers (auto-installed via Mason)
 
-- **vtsls** — TypeScript/JavaScript
+- **tsgo** — TypeScript/JavaScript (TypeScript 7 native preview)
 - **jdtls** — Java (requires Java 21+)
 - **yamlls** — YAML
 - **lua_ls** — Lua
@@ -41,7 +41,7 @@ A lightweight, performance-optimized Neovim configuration for **code review**. B
 | `\ff` | Reveal current file in explorer |
 | `-` | Open parent directory (Oil) |
 | `\sf` | Find files (respects .gitignore) |
-| `\sF` | Find ALL files (includes gitignored) |
+| `\SF` | Find ALL files (includes gitignored) |
 | `\sb` | Search open buffers |
 | `Ctrl-n` | Next buffer |
 | `Ctrl-p` | Previous buffer |
@@ -81,8 +81,8 @@ Inside fzf-lua picker:
 
 | Key | Action |
 |-----|--------|
-| `s` | Flash jump — type characters to jump to any match |
-| `S` | Flash treesitter — select treesitter node |
+| `gs` | Flash jump — type characters to jump to any match |
+| `gS` | Flash treesitter — select treesitter node |
 | `r` | Remote flash (operator-pending mode) |
 | `]]` | Jump to next LSP reference |
 | `[[` | Jump to previous LSP reference |

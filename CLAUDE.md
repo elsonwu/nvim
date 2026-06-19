@@ -76,7 +76,9 @@ echo "<rev>" > ~/.local/share/nvim/site/parser-info/<lang>.revision
 - `vim.o.ttyfast` is NOT a valid Neovim option — don't set it
 - For buffer size checks, use `vim.api.nvim_buf_get_offset()` for O(1) instead of iterating lines
 - `regexpengine = 0` (auto) is better than `1` (forced old engine)
-- jdtls requires Java 21+ — `cmd_env = { JAVA_HOME = "/opt/homebrew/opt/openjdk@21/..." }` in mason-lspconfig handler keeps system Java untouched
+- jdtls requires Java 21+ — use `vim.lsp.config("jdtls", { cmd_env = { JAVA_HOME = "/opt/homebrew/opt/openjdk@21/..." } })` BEFORE `mason-lspconfig.setup()`. The old `handlers` table was removed from mason-lspconfig; `cmd_env` set there was silently ignored.
+- jdtls perf for review: `settings.java.autobuild.enabled = false` stops incremental recompile churn (keep Maven/Gradle import on for classpath/go-to-def). Diagnostics then won't refresh live — acceptable for read-only review.
+- jdtls heap myth: the mason `jdtls.py` launcher sets `-Xms1G` and NO `-Xmx`, so the JVM defaults to ~25% of RAM (`-XX:MaxRAMPercentage`). On a 36G machine that's ~9G — do NOT add `--jvm-arg=-Xmx4g` (via `JDTLS_JVM_ARGS` env, which lspconfig's `jdtls.lua` reads), it would CAP heap lower and worsen GC. The "bump to 4G" advice only applies to launchers/IDEs that default to a low cap (e.g. VS Code Java's `-Xmx2G`).
 - snacks.nvim explorer keymap overrides go under `picker.sources.explorer.win.list.keys`, NOT `explorer.win.list.keys`
 - `mason-lspconfig` must load on `BufReadPre` (not `VeryLazy`) — otherwise lspconfig servers aren't configured before `FileType` fires and LSP attaches late
 
@@ -93,4 +95,4 @@ echo "<rev>" > ~/.local/share/nvim/site/parser-info/<lang>.revision
 
 TypeScript, JavaScript, TSX, JSON, YAML, Lua, Vim, Vimdoc, Markdown, Swift, Kotlin (treesitter parsers installed)
 
-LSP servers (via Mason): vtsls (TS/JS), jdtls (Java), yamlls (YAML), lua_ls (Lua), eslint (auto-detect)
+LSP servers (via Mason): tsgo (TS/JS — TypeScript 7 native preview), jdtls (Java), yamlls (YAML), lua_ls (Lua), eslint (auto-detect)
