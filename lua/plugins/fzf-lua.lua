@@ -26,6 +26,11 @@ return {
     { "<leader>sS", function() require("fzf-lua").live_grep({ rg_opts = "--column --line-number --no-heading --color=always --smart-case --hidden --no-ignore -g '!.git/'" }) end, desc = "Grep all (include ignored)" },
   },
   opts = {
+    -- Show filename FIRST, dir dimmed + trailing (VSCode-style). Without this,
+    -- fzf-lua leads with the full relative path; deep trees (e.g. Java
+    -- src/main/java/.../datasources/) share an identical prefix and the unique
+    -- filename gets truncated off-screen. Applies to files/grep/LSP/lsp_finder.
+    formatter = "path.filename_first",
     winopts = {
       height = 0.85,
       width = 0.85,
