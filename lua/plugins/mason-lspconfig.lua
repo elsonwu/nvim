@@ -14,6 +14,19 @@ return {
       cmd_env = {
         JAVA_HOME = "/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home",
       },
+      settings = {
+        java = {
+          -- Code-review workflow: disable incremental autobuild (recompiles on
+          -- every change = pure CPU churn when you're only navigating). Maven/
+          -- Gradle import stays ON (default) so classpath resolution + cross-dep
+          -- go-to-definition still work. Trade-off: compile diagnostics won't
+          -- refresh live — acceptable for read-only review.
+          autobuild = { enabled = false },
+        },
+      },
+      -- Heap intentionally NOT capped: the mason jdtls launcher sets no -Xmx,
+      -- so the JVM uses ~25% of RAM (~9G on this 36G machine). Adding -Xmx4g
+      -- would LOWER that cap and increase GC pressure. See CLAUDE.md gotcha.
     })
 
     -- ESLint: only start if project has ESLint config
