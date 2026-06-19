@@ -46,6 +46,10 @@ return {
       follow = true,
     },
     grep = {
+      -- grep source hard-defaults formatter=false, overriding the global one,
+      -- so live_grep would otherwise show the full path with the filename
+      -- truncated. Set it explicitly to lead with the filename.
+      formatter = "path.filename_first",
       rg_opts = "--hidden --column --line-number --no-heading --color=always --smart-case -g '!.git' -g '!node_modules' --max-count 300",
     },
     buffers = {
