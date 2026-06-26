@@ -26,6 +26,18 @@ return {
     { "<leader>ff", function() require("oil").toggle_float(vim.fn.expand("%:p:h")) end, desc = "Oil: current file dir (float)" },
   },
   init = function()
+    vim.api.nvim_create_autocmd("BufModifiedSet", {
+      pattern = "oil://*",
+      callback = function(ev)
+        local winbar = vim.bo[ev.buf].modified
+          and "%#DiagnosticWarn#● unsaved — :w to apply, :e to discard%*"
+          or ""
+        for _, win in ipairs(vim.fn.win_findbuf(ev.buf)) do
+          vim.wo[win].winbar = winbar
+        end
+      end,
+    })
+
     vim.api.nvim_create_autocmd("VimEnter", {
       once = true,
       callback = function()
@@ -39,6 +51,7 @@ return {
   end,
   opts = {
     default_file_explorer = false,
+    skip_confirm_for_simple_edits = true,
     view_options = {
       show_hidden = true,
     },
@@ -50,6 +63,7 @@ return {
     },
     keymaps = {
       ["q"] = "actions.close",
+      ["<Esc>"] = "actions.close",
       ["<CR>"] = "actions.select",
       ["-"] = "actions.parent",
       ["_"] = "actions.open_cwd",
