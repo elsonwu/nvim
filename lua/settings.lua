@@ -1,3 +1,6 @@
+-- Must be set before syntax loads for XML fold regions to activate
+vim.g.xml_syntax_folding = 1
+
 -- Editor behavior
 vim.opt.tabstop = 2
 vim.opt.shiftwidth = 2
@@ -48,12 +51,14 @@ vim.api.nvim_create_user_command("ReloadConfig", "source $MYVIMRC", {})
 vim.keymap.set("n", "<leader>yp", function()
   local path = vim.fn.expand("%:p")
   vim.fn.setreg("+", path)
+  vim.fn.setreg("*", path)
   vim.notify(path, vim.log.levels.INFO)
 end, { desc = "Yank absolute file path" })
 
 vim.keymap.set("n", "<leader>yr", function()
   local path = vim.fn.expand("%:.")
   vim.fn.setreg("+", path)
+  vim.fn.setreg("*", path)
   vim.notify(path, vim.log.levels.INFO)
 end, { desc = "Yank relative file path" })
 
@@ -66,18 +71,26 @@ if #vim.fn.argv() == 1 then
   end
 end
 
--- Indent-based folding for common file types
+-- Indent-based folding: indent IS the structure in these languages
 vim.api.nvim_create_autocmd("FileType", {
   group = vim.api.nvim_create_augroup("indent_fold", { clear = true }),
-  pattern = {
-    "yaml", "json", "lua",
-    "javascript", "typescript", "javascriptreact", "typescriptreact",
-    "kotlin", "swift", "java",
-    "html", "css", "scss",
-    "python", "toml", "vim",
-  },
+  pattern = { "yaml", "python", "toml" },
   callback = function()
     vim.opt_local.foldmethod = "indent"
+  end,
+})
+
+-- Syntax-based folding: brace/tag-structured languages fold more naturally by syntax
+vim.api.nvim_create_autocmd("FileType", {
+  group = vim.api.nvim_create_augroup("syntax_fold", { clear = true }),
+  pattern = {
+    "json", "lua", "vim",
+    "javascript", "typescript", "javascriptreact", "typescriptreact",
+    "kotlin", "swift", "java",
+    "html", "css", "scss", "xml",
+  },
+  callback = function()
+    vim.opt_local.foldmethod = "syntax"
   end,
 })
 

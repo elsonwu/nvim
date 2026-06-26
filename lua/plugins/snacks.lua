@@ -83,6 +83,7 @@ return {
                     local path = item and item.file or ""
                     if path ~= "" then
                       vim.fn.setreg("+", path)
+                      vim.fn.setreg("*", path)
                       vim.notify(path, vim.log.levels.INFO)
                     end
                   end,
@@ -91,6 +92,7 @@ return {
                     if path ~= "" then
                       path = vim.fn.fnamemodify(path, ":.")
                       vim.fn.setreg("+", path)
+                      vim.fn.setreg("*", path)
                       vim.notify(path, vim.log.levels.INFO)
                     end
                   end,

@@ -38,6 +38,9 @@ keymap("n", "[d", function() vim.diagnostic.jump({ count = -1, float = true }) e
 keymap("n", "]d", function() vim.diagnostic.jump({ count = 1, float = true }) end, { silent = true, desc = "Next diagnostic" })
 keymap("n", "K", vim.lsp.buf.hover, { silent = true, desc = "Hover doc" })
 
+-- Keymap search
+keymap("n", "<leader>?", function() require("fzf-lua").keymaps() end, { silent = true, desc = "Search keymaps" })
+
 -- Quit all
 keymap("n", "<leader>qq", "<cmd>qa<CR>", { silent = true, desc = "Quit all" })
 
@@ -48,7 +51,7 @@ keymap("n", "<leader>bb", ":Gitsigns blame_line<CR>", { silent = true })
 keymap("n", "<leader>fmt", function()
   local ft = vim.bo.filetype
   local view = vim.fn.winsaveview()
-  local cli = ({ json = "jq .", jsonc = "jq ." })[ft]
+  local cli = ({ json = "jq .", jsonc = "jq .", xml = "xmllint --format - | sed 's|/>| />|g'" })[ft]
   if cli and vim.fn.executable(vim.split(cli, " ")[1]) == 1 then
     vim.cmd("silent %!" .. cli)
     if vim.v.shell_error ~= 0 then
