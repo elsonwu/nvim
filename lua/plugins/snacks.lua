@@ -49,16 +49,14 @@ return {
       input = { enabled = true },
       -- Scope detection
       scope = { enabled = true },
-      -- File explorer (replaces nvim-tree)
-      explorer = { enabled = true },
+      explorer = { enabled = false }, -- oil.nvim handles file exploration
       -- Picker: remap explorer's o from system-open to open-in-nvim
       picker = {
         sources = {
           explorer = {
-            hidden = true,   -- show dotfiles by default (H to toggle)
-            ignored = true,  -- show gitignored files by default (I to toggle)
-            -- exclude heavy build artifacts to keep git-ignored scanning fast
-            exclude = { ".git", "node_modules", "build", "dist", "target", ".gradle" },
+            hidden = false,   -- hide dotfiles by default (H to toggle)
+            ignored = false,  -- hide gitignored files by default (I to toggle)
+            exclude = {},
             win = {
               list = {
                 keys = {

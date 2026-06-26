@@ -12,9 +12,7 @@ keymap("i", "<C-j>", "<Down>")
 keymap("i", "<C-h>", "<Left>")
 keymap("i", "<C-l>", "<Right>")
 
--- File explorer (snacks; ww handled by snacks.bufdelete in snacks.lua)
-keymap("n", "<leader>wh", function() Snacks.explorer.open() end, { silent = true, desc = "Toggle explorer" })
-keymap("n", "<leader>ff", function() Snacks.explorer.reveal() end, { silent = true, desc = "Reveal file in explorer" })
+-- File explorer keymaps defined in lua/plugins/oil.lua
 
 -- Buffer navigation
 keymap("n", "<C-n>", ":bnext<CR>", { silent = true })
