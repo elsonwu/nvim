@@ -22,6 +22,14 @@ return {
     { "<leader>sD", "<cmd>FzfLua diagnostics_workspace<CR>", desc = "Workspace diagnostics" },
     { "<leader>sr", "<cmd>FzfLua resume<CR>", desc = "Resume last search" },
     { "<leader>sc", "<cmd>FzfLua git_commits<CR>", desc = "Git commits" },
+    { "<leader>sG", function()
+        local files = vim.fn.systemlist("git diff --name-only HEAD 2>/dev/null")
+        if #files == 0 then
+          vim.notify("No changed files", vim.log.levels.INFO)
+          return
+        end
+        require("fzf-lua").live_grep({ search_dirs = files })
+      end, desc = "Grep git changed files" },
     { "<leader>SF", function() require("fzf-lua").files({ fd_opts = "--type f --hidden --no-ignore --exclude .git" }) end, desc = "Find files (include ignored)" },
     { "<leader>sS", function() require("fzf-lua").live_grep({ rg_opts = "--column --line-number --no-heading --color=always --smart-case --hidden --no-ignore -g '!.git/'" }) end, desc = "Grep all (include ignored)" },
   },
@@ -44,6 +52,11 @@ return {
     files = {
       fd_opts = "--type f --hidden --exclude .git --exclude node_modules --exclude target --exclude build --exclude dist",
       follow = true,
+    },
+    lsp = {
+      -- lsp sources (lsp_finder, lsp_references, etc.) hard-default formatter=false,
+      -- overriding the global one. Set explicitly to lead with the filename.
+      formatter = "path.filename_first",
     },
     grep = {
       -- grep source hard-defaults formatter=false, overriding the global one,
