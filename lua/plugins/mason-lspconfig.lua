@@ -50,11 +50,23 @@ return {
       },
     })
 
+    -- pyright: code-review only — disable type checking to suppress noisy
+    -- diagnostics; go-to-definition works purely from static analysis (no venv needed).
+    vim.lsp.config("pyright", {
+      settings = {
+        python = {
+          analysis = {
+            typeCheckingMode = "off",
+          },
+        },
+      },
+    })
+
     require("mason-lspconfig").setup({
       automatic_installation = true,
       -- tsgo = TypeScript 7 native (Go) LSP, replaces vtsls. Mason-managed, so
       -- automatic_enable starts it like the others. Much faster project load.
-      ensure_installed = { "tsgo", "jdtls", "yamlls", "lua_ls", "eslint" },
+      ensure_installed = { "tsgo", "jdtls", "yamlls", "lua_ls", "eslint", "pyright" },
     })
   end,
 }
