@@ -49,14 +49,14 @@ return {
       input = { enabled = true },
       -- Scope detection
       scope = { enabled = true },
-      explorer = { enabled = false }, -- oil.nvim handles file exploration
+      explorer = { enabled = true },
       -- Picker: remap explorer's o from system-open to open-in-nvim
       picker = {
         sources = {
           explorer = {
-            hidden = false,   -- hide dotfiles by default (H to toggle)
-            ignored = false,  -- hide gitignored files by default (I to toggle)
-            exclude = {},
+            hidden = true,   -- show dotfiles by default (H to toggle)
+            ignored = true,  -- show gitignored files by default (I to toggle)
+            exclude = { ".git", "node_modules", "build", "dist", "target", ".gradle" },
             win = {
               list = {
                 keys = {
@@ -109,6 +109,12 @@ return {
   end,
   keys = {
     { "<leader>ww", function() Snacks.bufdelete() end, desc = "Delete buffer" },
+    { "<leader>wh", function()
+      local file = vim.fn.expand("%:p")
+      local git_root = vim.fn.systemlist("git -C " .. vim.fn.shellescape(vim.fn.expand("%:p:h")) .. " rev-parse --show-toplevel")[1]
+      local root = (vim.v.shell_error == 0 and git_root) or vim.fn.getcwd()
+      Snacks.picker.explorer({ cwd = root, reveal = file })
+    end, desc = "Explorer: reveal current file" },
     { "<leader>gB", function() Snacks.gitbrowse() end, desc = "Open in browser" },
     { "]]", function() Snacks.words.jump(1) end, desc = "Next LSP reference" },
     { "[[", function() Snacks.words.jump(-1) end, desc = "Prev LSP reference" },

@@ -12,7 +12,7 @@ keymap("i", "<C-j>", "<Down>")
 keymap("i", "<C-h>", "<Left>")
 keymap("i", "<C-l>", "<Right>")
 
--- File explorer keymaps defined in lua/plugins/oil.lua
+-- File explorer keymaps defined in lua/plugins/snacks.lua (<leader>wh) and fzf-lua.lua (<leader>ff)
 
 -- Buffer navigation
 keymap("n", "<C-n>", ":bnext<CR>", { silent = true })

@@ -1,6 +1,6 @@
 return {
   "iamcco/markdown-preview.nvim",
-  build = "cd app && pnpm install",
+  build = "cd app && npm install", -- pnpm doesn't hoist @chemzqm/msgpack-lite alias, breaks require('msgpack-lite')
   ft = { "markdown" },
   cmd = { "MarkdownPreview", "MarkdownPreviewStop", "MarkdownPreviewToggle" },
   init = function()
