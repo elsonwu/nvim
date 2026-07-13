@@ -3,6 +3,11 @@ return {
   cmd = "FzfLua",
   dependencies = { "nvim-tree/nvim-web-devicons" },
   keys = {
+    { "<leader>ff", function()
+        vim.ui.input({ prompt = "Files in: ", completion = "dir", default = vim.fn.expand("%:p:h") }, function(dir)
+          if dir and dir ~= "" then require("fzf-lua").files({ cwd = dir }) end
+        end)
+      end, desc = "Find files in dir" },
     { "<leader>sf", "<cmd>FzfLua files<CR>", desc = "Find files" },
     { "<leader>ss", "<cmd>FzfLua live_grep<CR>", desc = "Live grep" },
     { "<leader>sb", "<cmd>FzfLua buffers<CR>", desc = "Search buffers" },
@@ -30,7 +35,7 @@ return {
         end
         require("fzf-lua").live_grep({ search_dirs = files })
       end, desc = "Grep git changed files" },
-    { "<leader>SF", function() require("fzf-lua").files({ fd_opts = "--type f --hidden --no-ignore --exclude .git" }) end, desc = "Find files (include ignored)" },
+    { "<leader>sF", function() require("fzf-lua").files({ fd_opts = "--type f --hidden --no-ignore --exclude .git" }) end, desc = "Find files (include ignored)" },
     { "<leader>sS", function() require("fzf-lua").live_grep({ rg_opts = "--column --line-number --no-heading --color=always --smart-case --hidden --no-ignore -g '!.git/'" }) end, desc = "Grep all (include ignored)" },
   },
   opts = {
