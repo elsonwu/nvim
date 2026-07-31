@@ -72,7 +72,14 @@ return {
             ignored = true,  -- show gitignored files by default (I to toggle)
             exclude = { ".git", "node_modules", "build", "dist", "target", ".gradle" },
             win = {
+              -- native winfixbuf tells other pickers (fzf-lua) not to hijack
+              -- this window when jumping to a file -- without it, snacks'
+              -- own buffer-swap guard (win.lua fixbuf()) intercepts the jump,
+              -- shoves the target buffer into some other window at line 1,
+              -- and snaps focus back to the explorer (leader-ss cursor bug).
+              input = { wo = { winfixbuf = true } },
               list = {
+                wo = { winfixbuf = true },
                 keys = {
                   ["o"] = "confirm",
                   -- keep horizontal scroll position when moving up/down
