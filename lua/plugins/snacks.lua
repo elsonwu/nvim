@@ -28,7 +28,13 @@ return {
       bufdelete = { enabled = true },
       -- Dashboard (replaces alpha-nvim)
       dashboard = {
-        enabled = true,
+        -- Explorer clears the directory buffer's name on `nvim <dir>` and
+        -- claims its own windows on BufEnter, before dashboard's own
+        -- open-checks run on UIEnter; dashboard's internal skip only guards
+        -- the argc>0 check, not the later empty-buffer checks, so it still
+        -- opens in the leftover window next to the explorer. Disable it
+        -- outright for the single-directory-arg case so only one shows.
+        enabled = not (vim.fn.argc(-1) == 1 and vim.fn.isdirectory(vim.fn.argv(0)) == 1),
         preset = {
           keys = {
             { icon = " ", key = "n", desc = "New File", action = ":ene | startinsert" },
