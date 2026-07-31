@@ -1,3 +1,17 @@
+-- snacks' list_down/list_up force cursor col to 0 on every move, which
+-- (with nowrap) yanks the horizontal scroll back to the left. Wrap them to
+-- restore the column after the move so scrolled-right names stay visible.
+-- Function-valued win.list.keys entries are called with the win object
+-- (not the picker) as their only argument -- see snacks.win:map().
+local function move_keep_col(action)
+  return function(win)
+    local col = vim.api.nvim_win_get_cursor(win.win)[2]
+    win:execute(action)
+    local row = vim.api.nvim_win_get_cursor(win.win)[1]
+    pcall(vim.api.nvim_win_set_cursor, win.win, { row, col })
+  end
+end
+
 return {
   "folke/snacks.nvim",
   priority = 1000,
@@ -61,6 +75,10 @@ return {
               list = {
                 keys = {
                   ["o"] = "confirm",
+                  -- keep horizontal scroll position when moving up/down
+                  -- (see move_keep_col above)
+                  ["j"] = move_keep_col("list_down"),
+                  ["k"] = move_keep_col("list_up"),
                   -- `l`/`h` scroll the tree right/left (native zL/zH) instead of
                   -- opening/collapsing, so deep-tree filenames come into view.
                   -- `o` opens files and toggles dirs (expand/collapse).
