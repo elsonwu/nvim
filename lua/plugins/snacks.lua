@@ -1,3 +1,17 @@
+-- snacks' list_down/list_up force cursor col to 0 on every move, which
+-- (with nowrap) yanks the horizontal scroll back to the left. Wrap them to
+-- restore the column after the move so scrolled-right names stay visible.
+-- Function-valued win.list.keys entries are called with the win object
+-- (not the picker) as their only argument -- see snacks.win:map().
+local function move_keep_col(action)
+  return function(win)
+    local col = vim.api.nvim_win_get_cursor(win.win)[2]
+    win:execute(action)
+    local row = vim.api.nvim_win_get_cursor(win.win)[1]
+    pcall(vim.api.nvim_win_set_cursor, win.win, { row, col })
+  end
+end
+
 return {
   "folke/snacks.nvim",
   priority = 1000,
@@ -14,7 +28,13 @@ return {
       bufdelete = { enabled = true },
       -- Dashboard (replaces alpha-nvim)
       dashboard = {
-        enabled = true,
+        -- Explorer clears the directory buffer's name on `nvim <dir>` and
+        -- claims its own windows on BufEnter, before dashboard's own
+        -- open-checks run on UIEnter; dashboard's internal skip only guards
+        -- the argc>0 check, not the later empty-buffer checks, so it still
+        -- opens in the leftover window next to the explorer. Disable it
+        -- outright for the single-directory-arg case so only one shows.
+        enabled = not (vim.fn.argc(-1) == 1 and vim.fn.isdirectory(vim.fn.argv(0)) == 1),
         preset = {
           keys = {
             { icon = " ", key = "n", desc = "New File", action = ":ene | startinsert" },
@@ -58,9 +78,20 @@ return {
             ignored = true,  -- show gitignored files by default (I to toggle)
             exclude = { ".git", "node_modules", "build", "dist", "target", ".gradle" },
             win = {
+              -- native winfixbuf tells other pickers (fzf-lua) not to hijack
+              -- this window when jumping to a file -- without it, snacks'
+              -- own buffer-swap guard (win.lua fixbuf()) intercepts the jump,
+              -- shoves the target buffer into some other window at line 1,
+              -- and snaps focus back to the explorer (leader-ss cursor bug).
+              input = { wo = { winfixbuf = true } },
               list = {
+                wo = { winfixbuf = true },
                 keys = {
                   ["o"] = "confirm",
+                  -- keep horizontal scroll position when moving up/down
+                  -- (see move_keep_col above)
+                  ["j"] = move_keep_col("list_down"),
+                  ["k"] = move_keep_col("list_up"),
                   -- `l`/`h` scroll the tree right/left (native zL/zH) instead of
                   -- opening/collapsing, so deep-tree filenames come into view.
                   -- `o` opens files and toggles dirs (expand/collapse).
