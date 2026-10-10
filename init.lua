@@ -31,13 +31,10 @@ require("lazy").setup("plugins", {
   checker = { enabled = false },
   performance = {
     rtp = {
+      -- Basenames of $VIMRUNTIME/plugin/* files (as of 0.12) to skip.
       disabled_plugins = {
-        "2html_plugin", "getscript", "getscriptPlugin", "gzip",
-        "logipat", "matchit", "matchparen", "netrw", "netrwPlugin",
-        "netrwSettings", "netrwFileHandlers", "tar", "tarPlugin",
-        "rrhelper", "spellfile_plugin", "vimball", "vimballPlugin",
-        "zip", "zipPlugin", "tutor", "rplugin", "synmenu", "optwin",
-        "osc52", "compiler", "bugreport", "ftplugin",
+        "gzip", "matchit", "matchparen", "netrwPlugin", "osc52",
+        "rplugin", "spellfile", "tarPlugin", "tutor", "zipPlugin",
       },
     },
   },
