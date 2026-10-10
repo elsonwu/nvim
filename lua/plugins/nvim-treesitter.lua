@@ -30,6 +30,7 @@ return {
 				require("nvim-treesitter").install({
 					"json", "lua", "vim", "javascript", "typescript", "tsx",
 					"kotlin", "swift", "java", "html", "css", "scss", "xml",
+					"markdown", "markdown_inline", -- required by render-markdown
 				})
 			end,
 		})
