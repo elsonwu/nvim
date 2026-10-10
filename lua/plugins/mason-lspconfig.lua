@@ -42,15 +42,9 @@ return {
       end,
     })
 
-    -- ESLint: only start if project has ESLint config
+    -- ESLint: lspconfig's default root_dir already starts it only when an
+    -- ESLint config (flat, legacy or package.json eslintConfig) is found.
     vim.lsp.config("eslint", {
-      root_dir = function(fname)
-        local eslint_configs = {
-          ".eslintrc.js", ".eslintrc.json", ".eslintrc.yml", ".eslintrc.yaml",
-          ".eslintrc.cjs", "eslint.config.js", "eslint.config.mjs", "eslint.config.cjs",
-        }
-        return require("lspconfig.util").root_pattern(unpack(eslint_configs))(fname)
-      end,
       settings = {
         workingDirectory = { mode = "auto" },
         format = { enable = true },
