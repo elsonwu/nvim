@@ -29,6 +29,19 @@ return {
       -- would LOWER that cap and increase GC pressure. See CLAUDE.md gotcha.
     })
 
+    -- tsgo: lspconfig's config (an alias of `tsc`) picks its binary by running
+    -- `<bin> --version` synchronously for up to four candidates, each a ~200ms
+    -- node cold start, the first time a TS file opens per project root. Pin
+    -- Mason's tsgo and resolve the root with the same markers, minus the probe
+    -- (and minus Deno detection, which this config doesn't need).
+    vim.lsp.config("tsgo", {
+      cmd = { "tsgo", "--lsp", "--stdio" },
+      root_dir = function(bufnr, on_dir)
+        local markers = { { "package-lock.json", "yarn.lock", "pnpm-lock.yaml", "bun.lockb", "bun.lock" }, { ".git" } }
+        on_dir(vim.fs.root(bufnr, markers) or vim.fn.getcwd())
+      end,
+    })
+
     -- ESLint: only start if project has ESLint config
     vim.lsp.config("eslint", {
       root_dir = function(fname)
