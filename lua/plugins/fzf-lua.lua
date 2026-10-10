@@ -187,6 +187,7 @@ return {
     },
     fzf_opts = {
       ["--layout"] = "reverse",
+      ["-i"] = "", -- always case-insensitive (default --smart-case breaks on all-caps queries)
     },
     keymap = {
       builtin = {
