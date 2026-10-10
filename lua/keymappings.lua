@@ -34,7 +34,11 @@ keymap("n", "<leader>ge", function() require("fzf-lua").diagnostics_document() e
 keymap("n", "<leader>ca", vim.lsp.buf.code_action, { silent = true, desc = "Code action" })
 keymap("n", "[d", function() vim.diagnostic.jump({ count = -1, float = true }) end, { silent = true, desc = "Prev diagnostic" })
 keymap("n", "]d", function() vim.diagnostic.jump({ count = 1, float = true }) end, { silent = true, desc = "Next diagnostic" })
-keymap("n", "K", vim.lsp.buf.hover, { silent = true, desc = "Hover doc" })
+-- Float options go straight to hover(): since 0.11 it no longer routes
+-- through vim.lsp.handlers, so overriding the handler has no effect.
+keymap("n", "K", function()
+  vim.lsp.buf.hover({ border = "single", max_width = 80, max_height = 20 })
+end, { silent = true, desc = "Hover doc" })
 
 -- Keymap search
 keymap("n", "<leader>?", function() require("fzf-lua").keymaps() end, { silent = true, desc = "Search keymaps" })

@@ -33,23 +33,6 @@ return {
 			},
 		})
 
-		-- LSP floating window defaults
-		vim.lsp.handlers["textDocument/hover"] = function(err, result, ctx, config)
-			config = config or {}
-			config.border = config.border or "single"
-			config.max_width = config.max_width or 80
-			config.max_height = config.max_height or 20
-			return vim.lsp.handlers.hover(err, result, ctx, config)
-		end
-
-		vim.lsp.handlers["textDocument/signatureHelp"] = function(err, result, ctx, config)
-			config = config or {}
-			config.border = config.border or "single"
-			config.max_width = config.max_width or 80
-			config.max_height = config.max_height or 10
-			return vim.lsp.handlers.signature_help(err, result, ctx, config)
-		end
-
 		local lsp_augroup = vim.api.nvim_create_augroup("lsp_events", { clear = true })
 
 		-- Notify on attach so you know the server connected
