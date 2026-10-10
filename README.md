@@ -14,7 +14,7 @@ A lightweight, performance-optimized Neovim configuration for **code review**. B
 | [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) | LSP client (go-to-definition, hover, diagnostics) |
 | [mason.nvim](https://github.com/williamboman/mason.nvim) | LSP server installer |
 | [mason-lspconfig](https://github.com/williamboman/mason-lspconfig.nvim) | Bridge between mason and lspconfig |
-| [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter) | Syntax highlighting and indentation |
+| [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter) | Syntax highlighting, indentation and folding |
 | [gitsigns.nvim](https://github.com/lewis6991/gitsigns.nvim) | Git signs in gutter, blame |
 | [lualine.nvim](https://github.com/nvim-lualine/lualine.nvim) | Statusline |
 | [dracula](https://github.com/Mofiqul/dracula.nvim) | Color scheme |

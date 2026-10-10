@@ -1,6 +1,3 @@
--- Must be set before syntax loads for XML fold regions to activate
-vim.g.xml_syntax_folding = 1
-
 -- Editor behavior
 vim.opt.tabstop = 2
 vim.opt.shiftwidth = 2
@@ -71,26 +68,14 @@ if #vim.fn.argv() == 1 then
   end
 end
 
--- Indent-based folding: indent IS the structure in these languages
+-- Indent-based folding: indent IS the structure in these languages.
+-- Everything with a treesitter parser gets treesitter folds (see
+-- nvim-treesitter.lua); this runs after that and overrides it.
 vim.api.nvim_create_autocmd("FileType", {
   group = vim.api.nvim_create_augroup("indent_fold", { clear = true }),
   pattern = { "yaml", "python", "toml" },
   callback = function()
     vim.opt_local.foldmethod = "indent"
-  end,
-})
-
--- Syntax-based folding: brace/tag-structured languages fold more naturally by syntax
-vim.api.nvim_create_autocmd("FileType", {
-  group = vim.api.nvim_create_augroup("syntax_fold", { clear = true }),
-  pattern = {
-    "json", "lua", "vim",
-    "javascript", "typescript", "javascriptreact", "typescriptreact",
-    "kotlin", "swift", "java",
-    "html", "css", "scss", "xml",
-  },
-  callback = function()
-    vim.opt_local.foldmethod = "syntax"
   end,
 })
 
