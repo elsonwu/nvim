@@ -36,11 +36,14 @@ A lightweight, performance-optimized Neovim configuration for **code review**. B
 
 | Key | Action |
 | ----- | -------- |
+| `\\` | Go to anything: files; prefix `$` buffers, `@` symbols in file, `#` workspace symbols |
 | `\wh` | Open explorer at the git root, revealing the current file (snacks) |
 | `\ff` | Find files under a directory (prompts first, with tab completion) |
 | `\sf` | Find files (respects .gitignore) |
 | `\SF` | Find ALL files (includes gitignored) |
 | `\sb` | Search open buffers |
+| `\so` | Recent files in the current directory |
+| `Ctrl-^` | Back to the previous file (native) |
 | `Ctrl-n` | Next buffer |
 | `Ctrl-p` | Previous buffer |
 | `\ww` | Close current buffer (preserves layout) |
@@ -145,6 +148,8 @@ fine until you actually search.
 | `\h` | Peek definition (fzf-lua preview) |
 | `\gt` | Peek type definition |
 | `\gr` | Find all references (fzf-lua) |
+| `\sy` | Workspace symbols — jump to a class/function by name |
+| `Ctrl-o` / `Ctrl-i` | Jump back / forward, restoring the previous scroll position |
 | `\rn` | Rename symbol |
 | `\ca` | Code action |
 | `\ge` | Buffer diagnostics |
