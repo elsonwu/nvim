@@ -34,6 +34,10 @@ local function fzf(fn)
   end
 end
 
+-- Shared by `files` and `global`: global is a separate provider and does not
+-- inherit the `files` options.
+local fd_opts = "--type f --hidden --exclude .git --exclude node_modules --exclude target --exclude build --exclude dist"
+
 return {
   "ibhagwan/fzf-lua",
   cmd = "FzfLua",
@@ -44,9 +48,14 @@ return {
           if dir and dir ~= "" then require("fzf-lua").files({ cwd = dir }) end
         end)
       end), desc = "Find files in dir" },
+    -- VSCode Ctrl-P: files by default; prefix `$` for buffers, `@` for symbols
+    -- in this file, `#` for workspace symbols.
+    { "<leader><leader>", fzf(function() require("fzf-lua").global() end), desc = "Go to anything (files, $buffers, @symbols, #workspace)" },
     { "<leader>sf", fzf(function() require("fzf-lua").files() end), desc = "Find files" },
     { "<leader>ss", fzf(function() require("fzf-lua").live_grep() end), desc = "Live grep" },
     { "<leader>sb", fzf(function() require("fzf-lua").buffers() end), desc = "Search buffers" },
+    { "<leader>so", fzf(function() require("fzf-lua").oldfiles({ cwd_only = true, include_current_session = true }) end), desc = "Recent files (cwd)" },
+    { "<leader>sy", fzf(function() require("fzf-lua").lsp_live_workspace_symbols() end), desc = "Workspace symbols" },
     { "<leader>sg", fzf(function() require("fzf-lua").git_status() end), desc = "Git status" },
     { "<leader>sw", fzf(function() require("fzf-lua").live_grep({ search = vim.fn.expand("<cword>") }) end), desc = "Live grep word under cursor (editable)" },
     -- Scope by pre-filling an *editable* ` -- <dir>/**` glob into the query instead
@@ -125,7 +134,11 @@ return {
       },
     },
     files = {
-      fd_opts = "--type f --hidden --exclude .git --exclude node_modules --exclude target --exclude build --exclude dist",
+      fd_opts = fd_opts,
+      follow = true,
+    },
+    global = {
+      fd_opts = fd_opts,
       follow = true,
     },
     lsp = {
