@@ -51,12 +51,90 @@ A lightweight, performance-optimized Neovim configuration for **code review**. B
 |-----|--------|
 | `\ss` | Live grep (respects .gitignore) |
 | `\sS` | Live grep ALL (includes gitignored) |
-| `\sw` | Grep word under cursor |
+| `\sw` | Grep word under cursor (also works on a visual selection) |
+| `\sP` | Live grep scoped to a directory, scope stays editable (see below) |
+| `\sG` | Live grep only files changed vs `HEAD` |
 | `\sr` | Resume last search |
 
 Inside fzf-lua picker:
+
 - `Ctrl-d` / `Ctrl-u` — Scroll preview
 - `Ctrl-q` — Select all and send to quickfix
+- `Ctrl-g` — Toggle rg-regex mode ↔ fzf-fuzzy mode. **Regex only works in rg mode**; if a
+  pattern that should match suddenly stops matching, check you haven't toggled.
+
+#### Scoping a search: the ` -- ` glob syntax
+
+This is the equivalent of VSCode's "files to include/exclude" box. A live-grep query has
+two halves separated by ` -- `:
+
+```text
+ActionPanel -- *.tsx !**/test/**
+└─ rg regex ─┘ └──── path globs ────┘
+```
+
+The left half goes to ripgrep as a **regex** (`\bfoo\b`, `(a|b)`, `foo.*bar` all work; rg
+uses Rust regex, so no lookaround or backreferences without `-P`). Each whitespace-separated
+token on the right becomes an `--iglob` (case-insensitive), `!` negates.
+
+**Globs here are more forgiving than raw ripgrep**, via a custom `rg_glob_fn` in
+`lua/plugins/fzf-lua.lua`. Raw rg anchors a glob to the *entire basename* and ignores
+directory components unless the glob contains `/`, so bare `Virtual*` means "filename starts
+with Virtual" and silently matches nothing when you meant "path contains Virtual". A token
+without `/` is therefore rewritten to a substring match:
+
+| You type | Actual glob | Matches |
+| --- | --- | --- |
+| `Virtual` · `Virtual*` · `*Virtual` | `*Virtual*` | `VirtualCard.tsx`, `MyVirtualThing.tsx` |
+| `.tsx` | `*.tsx*` | any filename containing `.tsx` |
+| `!test` | `!*test*` | excludes filenames containing `test` |
+| `{ts,tsx}` | `*{ts,tsx}*` | brace expansion is preserved |
+| `**/api/**` | unchanged | files under any `api/` directory |
+| `**/*.tsx` | unchanged | strict extension match, no trailing `*` |
+
+**Escape hatch:** any token containing `/` is passed through verbatim. That is also how you
+get strict anchoring back when the substring rewrite is too loose — write `**/*.tsx`, not
+`*.tsx`.
+
+#### `\sP` — pick a directory, keep it editable
+
+`\sP` prompts for a directory (with tab completion, which fzf's query line does not have)
+and then pre-fills it as a glob rather than setting the picker's `cwd`:
+
+```text
+\sP → "Grep in dir: lua/plugins" → query becomes:   ▐ -- lua/plugins/**
+                                                   ↑ cursor lands here
+```
+
+The point of the glob over `cwd` is that `cwd` is fixed for the whole picker session, while
+the glob half stays editable — widen to `**/api/**` or drop the scope entirely without
+reopening. Three cases are handled differently:
+
+| Chosen directory | Behaviour |
+| --- | --- |
+| Below `cwd` | Pre-filled as `<rel>/**`, editable |
+| Equal to `cwd` | No glob at all (`fnamemodify(cwd, ":.")` returns `""`, and rg rejects `./**`) |
+| Outside `cwd` | Falls back to setting `cwd` — rg matches globs against cwd-relative paths, so a relative glob cannot reach it. Scope is fixed for that session |
+
+Two things that look incidental but are not:
+
+- The `/**` suffix is required. A bare `--iglob 'src/foo'` matches only the directory entry
+  itself and reports "No files were searched".
+- The cursor jump uses `keymap.fzf.start = "+beginning-of-line"`. The leading `+` **appends**
+  to fzf-lua's own `start:+transform:<reload_command>` bind (`core.lua:640`); fzf keeps only
+  the last `--bind` for an event, so dropping the `+` silently breaks live reloading.
+
+Since the keyword half starts empty, the first rg run has an empty pattern and matches every
+line in scope — expect a burst of results before your first keystroke narrows it.
+
+> **Gotcha:** when a glob matches zero files, `rg` exits 2 with "No files were searched" but
+> fzf-lua only shows an empty list. "Bad glob" and "genuinely no matches" look identical.
+
+The `rg_glob_fn` **must stay self-contained** — no upvalues, `require` everything inside the
+function body. `live_grep` forces `multiprocess = 1` and ships the function to a headless
+Neovim instance via `string.dump`, which drops upvalues. A version that captures a local
+from the enclosing file works in-process and fails only in the headless path, so it looks
+fine until you actually search.
 
 ### Understanding Code (LSP)
 
