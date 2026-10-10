@@ -7,7 +7,7 @@ A lightweight, performance-optimized Neovim configuration for **code review**. B
 ## Plugins
 
 | Plugin | Purpose |
-|--------|---------|
+| -------- | --------- |
 | [snacks.nvim](https://github.com/folke/snacks.nvim) | Dashboard, file explorer, notifications, bigfile handling, indent guides |
 | [fzf-lua](https://github.com/ibhagwan/fzf-lua) | Fuzzy finder (files, grep, buffers, git) |
 | [flash.nvim](https://github.com/folke/flash.nvim) | Jump to any location by typing characters |
@@ -35,7 +35,7 @@ A lightweight, performance-optimized Neovim configuration for **code review**. B
 ### Navigating Files
 
 | Key | Action |
-|-----|--------|
+| ----- | -------- |
 | `\wh` | Open explorer at the git root, revealing the current file (snacks) |
 | `\ff` | Find files under a directory (prompts first, with tab completion) |
 | `\sf` | Find files (respects .gitignore) |
@@ -48,7 +48,7 @@ A lightweight, performance-optimized Neovim configuration for **code review**. B
 ### Searching Code
 
 | Key | Action |
-|-----|--------|
+| ----- | -------- |
 | `\ss` | Live grep (respects .gitignore) |
 | `\sS` | Live grep ALL (includes gitignored) |
 | `\sw` | Grep word under cursor (also works on a visual selection) |
@@ -139,7 +139,7 @@ fine until you actually search.
 ### Understanding Code (LSP)
 
 | Key | Action |
-|-----|--------|
+| ----- | -------- |
 | `gd` | Go to definition |
 | `K` | Hover documentation |
 | `\h` | Peek definition (fzf-lua preview) |
@@ -156,7 +156,7 @@ fine until you actually search.
 ### Jumping Within a File
 
 | Key | Action |
-|-----|--------|
+| ----- | -------- |
 | `gs` | Flash jump — type characters to jump to any match |
 | `gS` | Flash treesitter — select treesitter node |
 | `r` | Remote flash (operator-pending mode) |
@@ -166,7 +166,7 @@ fine until you actually search.
 ### Git Context
 
 | Key | Action |
-|-----|--------|
+| ----- | -------- |
 | `\bb` | Git blame current line |
 | `\gB` | Open file/repo in browser |
 | `\sg` | Git status (fzf-lua) |
@@ -175,7 +175,7 @@ fine until you actually search.
 ### General
 
 | Key | Action |
-|-----|--------|
+| ----- | -------- |
 | `\qq` | Quit all |
 | `\p` | Smart paste (disables syntax temporarily for speed) |
 | `\sh` | Help tags |
@@ -188,7 +188,7 @@ fine until you actually search.
 ### Dashboard (on startup)
 
 | Key | Action |
-|-----|--------|
+| ----- | -------- |
 | `n` | New file |
 | `f` | Find file |
 | `g` | Live grep |
@@ -202,7 +202,7 @@ fine until you actually search.
 ## Commands
 
 | Command | Action |
-|---------|--------|
+| --------- | -------- |
 | `:Format` | Format file with LSP |
 | `:ReloadConfig` | Reload Neovim configuration |
 | `:Lazy` | Open plugin manager |
