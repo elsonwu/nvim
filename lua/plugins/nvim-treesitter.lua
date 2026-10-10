@@ -19,7 +19,10 @@ return {
 			end
 		end, { nargs = "*", desc = "Update treesitter parsers" })
 
-		-- Enable treesitter highlight with large-file guards
+		-- Enable treesitter highlight. No size guards here: snacks.bigfile owns
+		-- large files (it sets filetype=bigfile, which has no parser), and a
+		-- size cutoff below that only pushed mid-size files onto the slower
+		-- regex-syntax path.
 		vim.api.nvim_create_autocmd("FileType", {
 			group = augroup,
 			callback = function(args)
@@ -28,17 +31,6 @@ return {
 				-- Skip special filetypes
 				local skip_ft = { "help", "alpha", "dashboard", "neo-tree", "Trouble", "lazy", "mason" }
 				if vim.tbl_contains(skip_ft, args.match) then
-					return
-				end
-
-				-- Skip large files (>100KB)
-				local ok, stats = pcall(vim.uv.fs_stat, vim.api.nvim_buf_get_name(buf))
-				if ok and stats and stats.size > 100 * 1024 then
-					return
-				end
-
-				-- Skip files with >5000 lines
-				if vim.api.nvim_buf_line_count(buf) > 5000 then
 					return
 				end
 
@@ -62,10 +54,7 @@ return {
 			if vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].filetype ~= "" then
 				local ft = vim.bo[buf].filetype
 				if not vim.tbl_contains({ "help", "alpha", "dashboard", "neo-tree", "Trouble", "lazy", "mason" }, ft) then
-					local ok, stats = pcall(vim.uv.fs_stat, vim.api.nvim_buf_get_name(buf))
-					if not (ok and stats and stats.size > 100 * 1024) and vim.api.nvim_buf_line_count(buf) <= 5000 then
-						pcall(vim.treesitter.start, buf)
-					end
+					pcall(vim.treesitter.start, buf)
 				end
 			end
 		end
