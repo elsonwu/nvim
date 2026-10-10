@@ -1,6 +1,6 @@
 # Neovim Configuration
 
-A lightweight, performance-optimized Neovim configuration for **code review**. Built with [lazy.nvim](https://github.com/folke/lazy.nvim) for fast startup and 12 carefully chosen plugins.
+A lightweight, performance-optimized Neovim configuration for **code review**. Built with [lazy.nvim](https://github.com/folke/lazy.nvim) for fast startup and 11 carefully chosen plugins.
 
 **Leader key:** `\` (backslash)
 
@@ -11,7 +11,6 @@ A lightweight, performance-optimized Neovim configuration for **code review**. B
 | [snacks.nvim](https://github.com/folke/snacks.nvim) | Dashboard, file explorer, notifications, bigfile handling, indent guides |
 | [fzf-lua](https://github.com/ibhagwan/fzf-lua) | Fuzzy finder (files, grep, buffers, git) |
 | [flash.nvim](https://github.com/folke/flash.nvim) | Jump to any location by typing characters |
-| [oil.nvim](https://github.com/stevearc/oil.nvim) | Edit filesystem like a buffer |
 | [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) | LSP client (go-to-definition, hover, diagnostics) |
 | [mason.nvim](https://github.com/williamboman/mason.nvim) | LSP server installer |
 | [mason-lspconfig](https://github.com/williamboman/mason-lspconfig.nvim) | Bridge between mason and lspconfig |
@@ -37,9 +36,8 @@ A lightweight, performance-optimized Neovim configuration for **code review**. B
 
 | Key | Action |
 |-----|--------|
-| `\wh` | Toggle file explorer (snacks) |
-| `\ff` | Reveal current file in explorer |
-| `-` | Open parent directory (Oil) |
+| `\wh` | Open explorer at the git root, revealing the current file (snacks) |
+| `\ff` | Find files under a directory (prompts first, with tab completion) |
 | `\sf` | Find files (respects .gitignore) |
 | `\SF` | Find ALL files (includes gitignored) |
 | `\sb` | Search open buffers |
@@ -133,7 +131,6 @@ Inside fzf-lua picker:
 | `:Mason` | Open LSP/tool installer |
 | `:TSInstall <lang>` | Install treesitter parser |
 | `:TSUpdate` | Update all treesitter parsers |
-| `:Oil` | Open filesystem editor |
 
 ---
 
@@ -169,7 +166,6 @@ Inside fzf-lua picker:
       mason-lspconfig.lua           -- Mason + LSP bridge
       nvim-lspconfig.lua            -- LSP configuration
       nvim-treesitter.lua           -- Syntax highlighting
-      oil.lua                       -- Filesystem editing
       snacks.lua                    -- Multi-module utility (explorer, dashboard, etc.)
 ```
 
