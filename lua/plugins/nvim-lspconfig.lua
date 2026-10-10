@@ -51,29 +51,11 @@ return {
 					return
 				end
 
-				vim.notify(client.name .. " attached", vim.log.levels.INFO)
-			end,
-		})
-
-		-- Show LSP progress as notifications (debounced per client to reduce noise)
-		local progress_timers = {}
-		vim.api.nvim_create_autocmd("LspProgress", {
-			group = lsp_augroup,
-			callback = function(ev)
-				local id = ev.data.client_id
-				if progress_timers[id] then
-					progress_timers[id]:stop()
-					progress_timers[id]:close()
+				-- Once per client, not on every buffer it attaches to. Progress is
+				-- shown by lualine (vim.lsp.status()), not as notifications.
+				if vim.tbl_count(client.attached_buffers) == 1 then
+					vim.notify(client.name .. " attached", vim.log.levels.INFO)
 				end
-				progress_timers[id] = vim.uv.new_timer()
-				progress_timers[id]:start(200, 0, vim.schedule_wrap(function()
-					progress_timers[id]:close()
-					progress_timers[id] = nil
-					local msg = vim.lsp.status()
-					if msg ~= "" then
-						vim.notify(msg, vim.log.levels.INFO)
-					end
-				end))
 			end,
 		})
 	end,
