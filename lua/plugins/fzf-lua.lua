@@ -49,11 +49,45 @@ return {
     { "<leader>sb", fzf(function() require("fzf-lua").buffers() end), desc = "Search buffers" },
     { "<leader>sg", fzf(function() require("fzf-lua").git_status() end), desc = "Git status" },
     { "<leader>sw", fzf(function() require("fzf-lua").live_grep({ search = vim.fn.expand("<cword>") }) end), desc = "Live grep word under cursor (editable)" },
+    -- Scope by pre-filling an *editable* ` -- <dir>/**` glob into the query instead
+    -- of setting `cwd`. Setting `cwd` bakes the scope in for the whole picker
+    -- session; as a glob it stays changeable while you type the keyword in front
+    -- of it. The `ui.input` step survives only for its `completion = "dir"` tab
+    -- completion -- fzf's query line has none.
     { "<leader>sP", fzf(function()
         vim.ui.input({ prompt = "Grep in dir: ", completion = "dir", default = vim.fn.expand("%:p:h") }, function(dir)
-          if dir and dir ~= "" then require("fzf-lua").live_grep({ cwd = dir }) end
+          if not dir or dir == "" then return end
+          local rel = vim.fn.fnamemodify(vim.fn.fnamemodify(dir, ":p"), ":.")
+          rel = rel:gsub("/+$", "")
+          if rel == "" then
+            -- dir *is* cwd: `fnamemodify(cwd, ":.")` returns "", and rg rejects a
+            -- `./**` style glob outright, so scope to nothing at all.
+            require("fzf-lua").live_grep()
+          elseif rel:sub(1, 1) == "/" then
+            -- outside cwd, so it stayed absolute -- rg matches globs against
+            -- cwd-relative paths and can't express this. Fall back to `cwd`
+            -- (scope is then fixed for the session, as it used to be).
+            require("fzf-lua").live_grep({ cwd = dir })
+          else
+            require("fzf-lua").live_grep({
+              -- a bare dir glob matches only the directory entry itself, never the
+              -- files under it, hence `/**`.
+              search = " -- " .. rel .. "/**",
+              -- Without this, grep.lua:144 runs the prefill through `rg_escape`,
+              -- turning it into a literal `\-\- lua/plugins/\*\*`: the ` -- `
+              -- separator stops matching and the escapes show up in the input box.
+              -- It also makes the keyword half a raw regex, same as plain `\ss`
+              -- (`\sw` deliberately keeps escaping, since a cword should be literal).
+              no_esc = true,
+              -- `--query` leaves the cursor at the end; push it to the keyword half.
+              -- The `+` prefix APPENDS to fzf-lua's own `start:+transform:<reload>`
+              -- bind (core.lua:640). Without it fzf keeps only the last `start` bind
+              -- and live reloading silently stops working.
+              keymap = { fzf = { start = "+beginning-of-line" } },
+            })
+          end
         end)
-      end), desc = "Live grep in dir" },
+      end), desc = "Live grep in dir (editable scope)" },
     { "<leader>sw", mode = "x", fzf(function()
         vim.cmd('noau normal! "vy"')
         require("fzf-lua").live_grep({ search = vim.fn.getreg("v") })
@@ -104,6 +138,42 @@ return {
       -- so live_grep would otherwise show the full path with the filename
       -- truncated. Set it explicitly to lead with the filename.
       formatter = "path.filename_first",
+      -- Make the ` -- <glob>` half of a live_grep query forgiving, VSCode-style.
+      -- rg's globs are anchored to the *whole basename* and ignore directory
+      -- components unless the glob contains `/`, so bare `Virtual*` means
+      -- "filename starts with Virtual" and silently matches nothing when you
+      -- meant "path contains Virtual". Here a token without `/` is rewritten to
+      -- a substring match: `Virtual`, `Virtual*` and `*Virtual` all become
+      -- `*Virtual*`; `!test` becomes `!*test*`.
+      -- Escape hatch: any token containing `/` is passed through verbatim
+      -- (`**/api/**`, `src/**/*.tsx`), which is also how you get strict
+      -- anchoring back when you want it (`**/*.tsx`, not `*.tsx*`).
+      --
+      -- MUST stay self-contained. live_grep forces multiprocess=1 and ships
+      -- this function to a headless instance via `string.dump`, which returns
+      -- the function "with new upvalues" -- i.e. drops them (fzf-lua
+      -- config.lua:1060, make_entry.lua:89). Anything referenced from the
+      -- enclosing file arrives as nil there, and *only* there, so a broken
+      -- version would still look fine in a same-process test.
+      rg_glob_fn = function(query, opts)
+        local libuv = require("fzf-lua.libuv")
+        local search_query, glob_str = query:match("(.*)" .. opts.glob_separator .. "(.*)")
+        local globs, glob_args = {}, ""
+        for _, token in ipairs(vim.split(glob_str or "", "%s+", { trimempty = true })) do
+          local neg, body = token:match("^(!?)(.*)$")
+          if #body > 0 then
+            if not body:find("/", 1, true) then
+              local core = body:gsub("^%*+", "")
+              core = core:gsub("%*+$", "")
+              body = "*" .. core .. "*"
+            end
+            local glob = neg .. body
+            table.insert(globs, glob)
+            glob_args = glob_args .. ("%s %s "):format(opts.glob_flag, libuv.shellescape(glob))
+          end
+        end
+        return search_query or "", glob_args, globs
+      end,
       rg_opts = "--hidden --column --line-number --no-heading --color=always --smart-case -g '!.git' -g '!node_modules' --max-count 300",
     },
     buffers = {
