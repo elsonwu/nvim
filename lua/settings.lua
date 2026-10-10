@@ -14,6 +14,10 @@ vim.opt.history = 1000
 vim.opt.signcolumn = "yes"
 vim.opt.clipboard = "unnamedplus"
 vim.opt.termguicolors = true
+-- <C-o>/<C-i> act like browser back/forward (stack) and restore each jump's
+-- scroll position (view), so returning from `gd` doesn't re-center the
+-- screen. `clean` (the default) drops entries for deleted buffers.
+vim.opt.jumpoptions = "clean,stack,view"
 
 -- Performance: vim options (single source of truth)
 vim.opt.synmaxcol = 240              -- Limit syntax highlighting for long lines
