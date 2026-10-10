@@ -142,8 +142,8 @@ return {
     { "<leader>ww", function() Snacks.bufdelete() end, desc = "Delete buffer" },
     { "<leader>wh", function()
       local file = vim.fn.expand("%:p")
-      local git_root = vim.fn.systemlist("git -C " .. vim.fn.shellescape(vim.fn.expand("%:p:h")) .. " rev-parse --show-toplevel")[1]
-      local root = (vim.v.shell_error == 0 and git_root) or vim.fn.getcwd()
+      -- pure-Lua upward search instead of spawning `git rev-parse` per press
+      local root = vim.fs.root(0, ".git") or vim.fn.getcwd()
       Snacks.picker.explorer({ cwd = root, reveal = file })
     end, desc = "Explorer: reveal current file" },
     { "<leader>gB", function() Snacks.gitbrowse() end, desc = "Open in browser" },
