@@ -5,13 +5,8 @@ local M = {}
 
 function M.setup()
   -- Disable matchparen/matchit (heavy on large files)
-  vim.g.matchup_matchparen_enabled = 0
-  vim.g.matchup_matchparen_fallback = false
   vim.g.loaded_matchparen = 1
   vim.g.loaded_matchit = 1
-
-  -- Terminal optimizations
-  vim.g.terminal_color_depth = 8
 
   -- Use faster grep tools
   if vim.fn.executable('rg') == 1 then
