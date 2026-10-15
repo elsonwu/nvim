@@ -2,11 +2,6 @@ return {
 	"neovim/nvim-lspconfig",
 	event = { "BufReadPre", "BufNewFile" },
 	config = function()
-		-- Format command
-		vim.api.nvim_create_user_command("Format", function()
-			vim.lsp.buf.format({ timeout_ms = 2000 })
-		end, { desc = "Format file with LSP" })
-
 		-- Reduce LSP log noise
 		vim.lsp.log.set_level(vim.log.levels.ERROR)
 
