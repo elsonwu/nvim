@@ -34,8 +34,8 @@ local function fzf(fn)
   end
 end
 
--- Shared by `files` and `global`: global is a separate provider and does not
--- inherit the `files` options.
+-- fzf-lua.utils (ansi_codes) can't be required yet when this spec is read.
+local function ansi(code, s) return ("\27[%sm%s\27[0m"):format(code, s) end
 local fd_opts = "--type f --hidden --exclude .git --exclude node_modules --exclude target --exclude build --exclude dist"
 
 return {
@@ -43,79 +43,19 @@ return {
   cmd = "FzfLua",
   dependencies = { "nvim-tree/nvim-web-devicons" },
   keys = {
-    { "<leader>ff", fzf(function()
-        vim.ui.input({ prompt = "Files in: ", completion = "dir", default = vim.fn.expand("%:p:h") }, function(dir)
-          if dir and dir ~= "" then require("fzf-lua").files({ cwd = dir }) end
-        end)
-      end), desc = "Find files in dir" },
-    -- VSCode Ctrl-P: files by default; prefix `$` for buffers, `@` for symbols
-    -- in this file, `#` for workspace symbols.
-    { "<leader><leader>", fzf(function() require("fzf-lua").global() end), desc = "Go to anything (files, $buffers, @symbols, #workspace)" },
-    { "<leader>sf", fzf(function() require("fzf-lua").files() end), desc = "Find files" },
-    { "<leader>ss", fzf(function() require("fzf-lua").live_grep() end), desc = "Live grep" },
-    { "<leader>sb", fzf(function() require("fzf-lua").buffers() end), desc = "Search buffers" },
-    { "<leader>so", fzf(function() require("fzf-lua").oldfiles({ cwd_only = true, include_current_session = true }) end), desc = "Recent files (cwd)" },
-    { "<leader>sy", fzf(function() require("fzf-lua").lsp_live_workspace_symbols() end), desc = "Workspace symbols" },
-    { "<leader>sg", fzf(function() require("fzf-lua").git_status() end), desc = "Git status" },
-    { "<leader>sw", fzf(function() require("fzf-lua").live_grep({ search = vim.fn.expand("<cword>") }) end), desc = "Live grep word under cursor (editable)" },
-    -- Scope by pre-filling an *editable* ` -- <dir>/**` glob into the query instead
-    -- of setting `cwd`. Setting `cwd` bakes the scope in for the whole picker
-    -- session; as a glob it stays changeable while you type the keyword in front
-    -- of it. The `ui.input` step survives only for its `completion = "dir"` tab
-    -- completion -- fzf's query line has none.
-    { "<leader>sP", fzf(function()
-        vim.ui.input({ prompt = "Grep in dir: ", completion = "dir", default = vim.fn.expand("%:p:h") }, function(dir)
-          if not dir or dir == "" then return end
-          local rel = vim.fn.fnamemodify(vim.fn.fnamemodify(dir, ":p"), ":.")
-          rel = rel:gsub("/+$", "")
-          if rel == "" then
-            -- dir *is* cwd: `fnamemodify(cwd, ":.")` returns "", and rg rejects a
-            -- `./**` style glob outright, so scope to nothing at all.
-            require("fzf-lua").live_grep()
-          elseif rel:sub(1, 1) == "/" then
-            -- outside cwd, so it stayed absolute -- rg matches globs against
-            -- cwd-relative paths and can't express this. Fall back to `cwd`
-            -- (scope is then fixed for the session, as it used to be).
-            require("fzf-lua").live_grep({ cwd = dir })
-          else
-            require("fzf-lua").live_grep({
-              -- a bare dir glob matches only the directory entry itself, never the
-              -- files under it, hence `/**`.
-              search = " -- " .. rel .. "/**",
-              -- Without this, grep.lua:144 runs the prefill through `rg_escape`,
-              -- turning it into a literal `\-\- lua/plugins/\*\*`: the ` -- `
-              -- separator stops matching and the escapes show up in the input box.
-              -- It also makes the keyword half a raw regex, same as plain `\ss`
-              -- (`\sw` deliberately keeps escaping, since a cword should be literal).
-              no_esc = true,
-              -- `--query` leaves the cursor at the end; push it to the keyword half.
-              -- The `+` prefix APPENDS to fzf-lua's own `start:+transform:<reload>`
-              -- bind (core.lua:640). Without it fzf keeps only the last `start` bind
-              -- and live reloading silently stops working.
-              keymap = { fzf = { start = "+beginning-of-line" } },
-            })
-          end
-        end)
-      end), desc = "Live grep in dir (editable scope)" },
-    { "<leader>sw", mode = "x", fzf(function()
+    -- One search for everything: `name/text -- path` (see lua/search.lua).
+    { "<leader><leader>", fzf(function() require("search").open() end), desc = "Search files + content" },
+    { "<leader><leader>", mode = "x", fzf(function()
         vim.cmd('noau normal! "vy"')
-        require("fzf-lua").live_grep({ search = vim.fn.getreg("v") })
-      end), desc = "Live grep visual selection (editable)" },
-    { "<leader>sh", fzf(function() require("fzf-lua").help_tags() end), desc = "Help tags" },
+        local text = vim.fn.getreg("v"):match("[^\n]*")
+        require("search").open({ query = vim.fn.escape(text, [[\.^$*+?()[]{}|]]) })
+      end), desc = "Search selection" },
+    { "<leader>sr", fzf(function() require("fzf-lua").resume() end), desc = "Resume last search" },
+    { "<leader>sg", fzf(function() require("fzf-lua").git_status() end), desc = "Git status" },
+    { "<leader>sc", fzf(function() require("fzf-lua").git_commits() end), desc = "Git commits" },
     { "<leader>sd", fzf(function() require("fzf-lua").diagnostics_document() end), desc = "Document diagnostics" },
     { "<leader>sD", fzf(function() require("fzf-lua").diagnostics_workspace() end), desc = "Workspace diagnostics" },
-    { "<leader>sr", fzf(function() require("fzf-lua").resume() end), desc = "Resume last search" },
-    { "<leader>sc", fzf(function() require("fzf-lua").git_commits() end), desc = "Git commits" },
-    { "<leader>sG", fzf(function()
-        local files = vim.fn.systemlist("git diff --name-only HEAD 2>/dev/null")
-        if #files == 0 then
-          vim.notify("No changed files", vim.log.levels.INFO)
-          return
-        end
-        require("fzf-lua").live_grep({ search_dirs = files })
-      end), desc = "Grep git changed files" },
-    { "<leader>sF", fzf(function() require("fzf-lua").files({ fd_opts = "--type f --hidden --no-ignore --exclude .git" }) end), desc = "Find files (include ignored)" },
-    { "<leader>sS", fzf(function() require("fzf-lua").live_grep({ rg_opts = "--column --line-number --no-heading --color=always --smart-case --hidden --no-ignore -g '!.git/'" }) end), desc = "Grep all (include ignored)" },
+    { "<leader>sh", fzf(function() require("fzf-lua").help_tags() end), desc = "Help tags" },
   },
   opts = {
     -- Show filename FIRST, dir dimmed + trailing (VSCode-style). Without this,
@@ -137,61 +77,22 @@ return {
       fd_opts = fd_opts,
       follow = true,
     },
-    global = {
-      fd_opts = fd_opts,
-      follow = true,
-    },
     lsp = {
       -- lsp sources (lsp_finder, lsp_references, etc.) hard-default formatter=false,
       -- overriding the global one. Set explicitly to lead with the filename.
       formatter = "path.filename_first",
-    },
-    grep = {
-      -- grep source hard-defaults formatter=false, overriding the global one,
-      -- so live_grep would otherwise show the full path with the filename
-      -- truncated. Set it explicitly to lead with the filename.
-      formatter = "path.filename_first",
-      -- Make the ` -- <glob>` half of a live_grep query forgiving, VSCode-style.
-      -- rg's globs are anchored to the *whole basename* and ignore directory
-      -- components unless the glob contains `/`, so bare `Virtual*` means
-      -- "filename starts with Virtual" and silently matches nothing when you
-      -- meant "path contains Virtual". Here a token without `/` is rewritten to
-      -- a substring match: `Virtual`, `Virtual*` and `*Virtual` all become
-      -- `*Virtual*`; `!test` becomes `!*test*`.
-      -- Escape hatch: any token containing `/` is passed through verbatim
-      -- (`**/api/**`, `src/**/*.tsx`), which is also how you get strict
-      -- anchoring back when you want it (`**/*.tsx`, not `*.tsx*`).
-      --
-      -- MUST stay self-contained. live_grep forces multiprocess=1 and ships
-      -- this function to a headless instance via `string.dump`, which returns
-      -- the function "with new upvalues" -- i.e. drops them (fzf-lua
-      -- config.lua:1060, make_entry.lua:89). Anything referenced from the
-      -- enclosing file arrives as nil there, and *only* there, so a broken
-      -- version would still look fine in a same-process test.
-      rg_glob_fn = function(query, opts)
-        local libuv = require("fzf-lua.libuv")
-        local search_query, glob_str = query:match("(.*)" .. opts.glob_separator .. "(.*)")
-        local globs, glob_args = {}, ""
-        for _, token in ipairs(vim.split(glob_str or "", "%s+", { trimempty = true })) do
-          local neg, body = token:match("^(!?)(.*)$")
-          if #body > 0 then
-            if not body:find("/", 1, true) then
-              local core = body:gsub("^%*+", "")
-              core = core:gsub("%*+$", "")
-              body = "*" .. core .. "*"
-            end
-            local glob = neg .. body
-            table.insert(globs, glob)
-            glob_args = glob_args .. ("%s %s "):format(opts.glob_flag, libuv.shellescape(glob))
-          end
-        end
-        return search_query or "", glob_args, globs
-      end,
-      rg_opts = "--hidden --column --line-number --no-heading --color=always --smart-case -g '!.git' -g '!node_modules' --max-count 300",
-    },
-    buffers = {
-      sort_lastused = true,
-      ignore_current_buffer = true,
+      -- `gr`: one list for whatever is under the cursor. Incoming calls are left
+      -- out on purpose: every call site is already a `ref` row.
+      finder = {
+        providers = {
+          { "definitions", prefix = ansi("32", "def ") },
+          { "implementations", prefix = ansi("32", "impl") },
+          { "references", prefix = ansi("34", "ref ") },
+          { "outgoing_calls", prefix = ansi("33", "out ") },
+        },
+        includeDeclaration = false, -- already the `def` row
+        ignore_current_line = true,
+      },
     },
     git = {
       status = {

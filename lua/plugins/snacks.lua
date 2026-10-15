@@ -38,9 +38,7 @@ return {
         preset = {
           keys = {
             { icon = " ", key = "n", desc = "New File", action = ":ene | startinsert" },
-            { icon = " ", key = "f", desc = "Find File", action = ":FzfLua files" },
-            { icon = " ", key = "g", desc = "Live Grep", action = ":FzfLua live_grep" },
-            { icon = " ", key = "r", desc = "Recent Files", action = ":FzfLua oldfiles" },
+            { icon = " ", key = "f", desc = "Search (recent, files, content)", action = function() require("search").open() end },
             { icon = " ", key = "c", desc = "Config", action = ":FzfLua files cwd=~/.config/nvim" },
             { icon = "󰒲 ", key = "L", desc = "Lazy", action = ":Lazy" },
             { icon = " ", key = "q", desc = "Quit", action = ":qa" },
@@ -97,16 +95,23 @@ return {
                   -- `o` opens files and toggles dirs (expand/collapse).
                   ["l"] = function() vim.cmd("normal! zL") end,
                   ["h"] = function() vim.cmd("normal! zH") end,
-                  -- `/` launches fzf-lua files (respects .gitignore, same as \sf)
-                  -- scoped to the focused node's dir, instead of snacks' fd search
-                  -- that ignores .gitignore. `i` still opens the native filter.
+                  -- `/` opens the unified search (\\) scoped to the focused
+                  -- node's dir, instead of snacks' fd search that ignores
+                  -- .gitignore. `i` still opens the native filter.
                   ["/"] = function(_, item)
                     local dir = vim.fn.getcwd()
                     if item and item.file and item.file ~= "" then
                       dir = vim.fn.isdirectory(item.file) == 1 and item.file
                         or vim.fn.fnamemodify(item.file, ":h")
                     end
-                    require("fzf-lua").files({ cwd = dir })
+                    local rel = vim.fs.relpath(vim.fn.getcwd(), dir)
+                    if rel == nil then -- outside the cwd: search from that dir
+                      require("search").open({ cwd = dir })
+                    elseif rel == "." then
+                      require("search").open()
+                    else
+                      require("search").open({ query = " -- ^" .. rel .. "/", cursor_start = true })
+                    end
                   end,
                   ["yp"] = function(picker, item)
                     local path = item and item.file or ""

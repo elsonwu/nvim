@@ -24,13 +24,30 @@ keymap("x", ">", ">gv", { silent = true })
 keymap("n", "<Esc>", "<cmd>nohlsearch<CR>", { silent = true })
 
 -- LSP (native Neovim 0.11)
-keymap("n", "gd", vim.lsp.buf.definition, { silent = true, desc = "Go to definition" })
+-- `gr` is the one navigation key: definition, implementations, references and
+-- outgoing calls of whatever is under the cursor, in one list (providers in
+-- plugins/fzf-lua.lua). The built-in gr* maps are dropped so `gr` doesn't wait
+-- for a second key; rename / code action keep their leader maps below.
+for _, lhs in ipairs({ "grr", "gra", "grn", "gri", "grt", "grx" }) do
+  pcall(vim.keymap.del, "n", lhs)
+end
+pcall(vim.keymap.del, "x", "gra")
+keymap("n", "gr", function()
+  -- Providers overlap (the "implementation" of a plain function is its own
+  -- definition). They run in order, so keeping the first row per line keeps
+  -- the most specific label.
+  local seen = {}
+  require("fzf-lua").lsp_finder({
+    headers = false, -- would print "Regex filter: <function>"
+    regex_filter = function(item)
+      local key = item.filename .. ":" .. item.lnum
+      if seen[key] then return false end
+      seen[key] = true
+      return true
+    end,
+  })
+end, { silent = true, desc = "Definition / refs / impls / calls" })
 keymap("n", "<leader>rn", vim.lsp.buf.rename, { silent = true, desc = "Rename" })
-keymap("n", "<leader>h", function() require("fzf-lua").lsp_definitions() end, { silent = true, desc = "Peek definition" })
-keymap("n", "<leader>gt", function() require("fzf-lua").lsp_typedefs() end, { silent = true, desc = "Peek type definition" })
-keymap("n", "<leader>gr", function() require("fzf-lua").lsp_finder() end, { silent = true, desc = "LSP finder" })
-keymap("n", "<leader>gE", function() require("fzf-lua").diagnostics_workspace() end, { silent = true, desc = "Workspace diagnostics" })
-keymap("n", "<leader>ge", function() require("fzf-lua").diagnostics_document() end, { silent = true, desc = "Buffer diagnostics" })
 keymap("n", "<leader>ca", vim.lsp.buf.code_action, { silent = true, desc = "Code action" })
 keymap("n", "[d", function() vim.diagnostic.jump({ count = -1, float = true }) end, { silent = true, desc = "Prev diagnostic" })
 keymap("n", "]d", function() vim.diagnostic.jump({ count = 1, float = true }) end, { silent = true, desc = "Next diagnostic" })
