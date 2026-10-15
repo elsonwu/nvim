@@ -1,6 +1,6 @@
 # Neovim Configuration
 
-A lightweight, performance-optimized Neovim configuration for **code review**. Built with [lazy.nvim](https://github.com/folke/lazy.nvim) for fast startup and 11 carefully chosen plugins.
+A lightweight, performance-optimized Neovim configuration for **code review**. Built with [lazy.nvim](https://github.com/folke/lazy.nvim) for fast startup and 13 carefully chosen plugins.
 
 **Leader key:** `\` (backslash)
 
@@ -19,6 +19,8 @@ A lightweight, performance-optimized Neovim configuration for **code review**. B
 | [lualine.nvim](https://github.com/nvim-lualine/lualine.nvim) | Statusline |
 | [dracula](https://github.com/Mofiqul/dracula.nvim) | Color scheme |
 | [nvim-web-devicons](https://github.com/nvim-tree/nvim-web-devicons) | File type icons |
+| [render-markdown.nvim](https://github.com/MeanderingProgrammer/render-markdown.nvim) | Render Markdown in the buffer; `gd` follows links |
+| [markdown-preview.nvim](https://github.com/iamcco/markdown-preview.nvim) | Browser preview, including Mermaid |
 
 ### LSP Servers (auto-installed via Mason)
 
@@ -26,7 +28,7 @@ A lightweight, performance-optimized Neovim configuration for **code review**. B
 - **jdtls** — Java (requires Java 21+)
 - **yamlls** — YAML
 - **lua_ls** — Lua
-- **eslint** — ESLint (auto-detects config presence)
+- **pyright** — Python (type checking off, navigation only)
 
 ---
 
@@ -153,7 +155,6 @@ already a `ref`.
 
 | Command | Action |
 | --------- | -------- |
-| `:Format` | Format file with LSP |
 | `:ReloadConfig` | Reload Neovim configuration |
 | `:Lazy` | Open plugin manager |
 | `:Mason` | Open LSP/tool installer |
@@ -166,9 +167,8 @@ already a `ref`.
 
 - **Lazy-loading**: Plugins load on demand via events, commands, or keybindings
 - **Large file handling**: snacks.bigfile disables heavy features for files >256KB
-- **Treesitter guards**: Skips highlighting for files >100KB or >5000 lines
 - **LSP guards**: Auto-detaches LSP for files >1MB
-- **Disabled built-in plugins**: 25+ unused Vim plugins disabled at startup
+- **Disabled built-in plugins**: unused runtime plugins skipped at startup (`init.lua`)
 - **Optimized search**: ripgrep for grep, fd for file finding
 - **UI minimalism**: No cursor line, no ruler, no showcmd for faster rendering
 
@@ -185,18 +185,18 @@ already a `ref`.
     settings.lua                    -- All vim options (single source of truth)
     keymappings.lua                 -- Global key mappings
     search.lua                      -- Unified search picker (wraps bin/search)
-    performance.lua                 -- Runtime performance optimizations
-    startup-profile.lua             -- Startup timing
     plugins/
       dracula.lua                   -- Color scheme
       flash.lua                     -- Quick jump motions
       fzf-lua.lua                   -- Fuzzy finder
       gitsigns.lua                  -- Git integration
       lualine.lua                   -- Status line
+      markdown-preview.lua          -- Browser Markdown preview
       mason.lua                     -- LSP installer
       mason-lspconfig.lua           -- Mason + LSP bridge
       nvim-lspconfig.lua            -- LSP configuration
       nvim-treesitter.lua           -- Syntax highlighting
+      render-markdown.lua           -- In-buffer Markdown rendering
       snacks.lua                    -- Multi-module utility (explorer, dashboard, etc.)
 ```
 

@@ -42,21 +42,6 @@ return {
       end,
     })
 
-    -- ESLint: lspconfig's default root_dir already starts it only when an
-    -- ESLint config (flat, legacy or package.json eslintConfig) is found.
-    vim.lsp.config("eslint", {
-      settings = {
-        workingDirectory = { mode = "auto" },
-        format = { enable = true },
-        lint = { enable = true },
-        run = "onType",
-      },
-      filetypes = {
-        "javascript", "javascriptreact", "typescript", "typescriptreact",
-        "vue", "svelte", "astro",
-      },
-    })
-
     -- pyright: code-review only — disable type checking to suppress noisy
     -- diagnostics; go-to-definition works purely from static analysis (no venv needed).
     vim.lsp.config("pyright", {
@@ -73,7 +58,7 @@ return {
       automatic_installation = true,
       -- tsgo = TypeScript 7 native (Go) LSP, replaces vtsls. Mason-managed, so
       -- automatic_enable starts it like the others. Much faster project load.
-      ensure_installed = { "tsgo", "jdtls", "yamlls", "lua_ls", "eslint", "pyright" },
+      ensure_installed = { "tsgo", "jdtls", "yamlls", "lua_ls", "pyright" },
     })
   end,
 }

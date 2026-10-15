@@ -4,6 +4,7 @@ return {
 	priority = 800, -- Load right after colorscheme (priority 900)
 	config = function()
 		require("nvim-treesitter").setup({})
+		local skip_ft = { "help", "lazy", "mason" }
 		local augroup = vim.api.nvim_create_augroup("nvim_treesitter_custom", { clear = true })
 
 		-- v1.0 removed :TSInstall/:TSUpdate commands, re-add them
@@ -55,7 +56,6 @@ return {
 				local buf = args.buf
 
 				-- Skip special filetypes
-				local skip_ft = { "help", "alpha", "dashboard", "neo-tree", "Trouble", "lazy", "mason" }
 				if vim.tbl_contains(skip_ft, args.match) then
 					return
 				end
@@ -79,7 +79,7 @@ return {
 		for _, buf in ipairs(vim.api.nvim_list_bufs()) do
 			if vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].filetype ~= "" then
 				local ft = vim.bo[buf].filetype
-				if not vim.tbl_contains({ "help", "alpha", "dashboard", "neo-tree", "Trouble", "lazy", "mason" }, ft) then
+				if not vim.tbl_contains(skip_ft, ft) then
 					vim.api.nvim_buf_call(buf, function() start(buf) end)
 				end
 			end

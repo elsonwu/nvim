@@ -19,9 +19,6 @@ vim.opt.rtp:prepend(lazypath)
 vim.g.mapleader = "\\"
 vim.g.maplocalleader = "\\"
 
--- Load performance optimizations before plugins
-require("performance").setup()
-
 -- Setup lazy.nvim
 require("lazy").setup("plugins", {
   change_detection = {
@@ -40,6 +37,5 @@ require("lazy").setup("plugins", {
   },
 })
 
-require("startup-profile").setup()
 require("settings")
 require("keymappings")
