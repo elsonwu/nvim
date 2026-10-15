@@ -81,7 +81,7 @@ return {
       -- lsp sources (lsp_finder, lsp_references, etc.) hard-default formatter=false,
       -- overriding the global one. Set explicitly to lead with the filename.
       formatter = "path.filename_first",
-      -- `gr`: one list for whatever is under the cursor. Incoming calls are left
+      -- `gd`: one list for whatever is under the cursor. Incoming calls are left
       -- out on purpose: every call site is already a `ref` row.
       finder = {
         providers = {

@@ -81,7 +81,7 @@ exactly what the picker gets: `~/.config/nvim/bin/search -- 'submit -- vmc .tsx$
 
 | Key | Action |
 | ----- | -------- |
-| `gr` | Everything about the symbol under the cursor, whatever it is, in one list (below) |
+| `gd` | Everything about the symbol under the cursor, whatever it is, in one list (below) |
 | `K` | Hover documentation |
 | `Ctrl-o` / `Ctrl-i` | Jump back / forward, restoring the previous scroll position |
 | `\rn` | Rename symbol |
@@ -90,7 +90,7 @@ exactly what the picker gets: `~/.config/nvim/bin/search -- 'submit -- vmc .tsx$
 | `\sD` | Workspace diagnostics (fzf-lua) |
 | `[d` / `]d` | Previous / next diagnostic |
 
-`gr` rows are labelled:
+`gd` rows are labelled:
 
 | Label | Meaning |
 | --- | --- |
