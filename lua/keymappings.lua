@@ -24,15 +24,10 @@ keymap("x", ">", ">gv", { silent = true })
 keymap("n", "<Esc>", "<cmd>nohlsearch<CR>", { silent = true })
 
 -- LSP (native Neovim 0.11)
--- `gr` is the one navigation key: definition, implementations, references and
+-- `gd` is the one navigation key: definition, implementations, references and
 -- outgoing calls of whatever is under the cursor, in one list (providers in
--- plugins/fzf-lua.lua). The built-in gr* maps are dropped so `gr` doesn't wait
--- for a second key; rename / code action keep their leader maps below.
-for _, lhs in ipairs({ "grr", "gra", "grn", "gri", "grt", "grx" }) do
-  pcall(vim.keymap.del, "n", lhs)
-end
-pcall(vim.keymap.del, "x", "gra")
-keymap("n", "gr", function()
+-- plugins/fzf-lua.lua).
+keymap("n", "gd", function()
   -- Providers overlap (the "implementation" of a plain function is its own
   -- definition). They run in order, so keeping the first row per line keeps
   -- the most specific label.

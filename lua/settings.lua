@@ -15,7 +15,7 @@ vim.opt.signcolumn = "yes"
 vim.opt.clipboard = "unnamedplus"
 vim.opt.termguicolors = true
 -- <C-o>/<C-i> act like browser back/forward (stack) and restore each jump's
--- scroll position (view), so returning from a `gr` jump doesn't re-center the
+-- scroll position (view), so returning from a `gd` jump doesn't re-center the
 -- screen. `clean` (the default) drops entries for deleted buffers.
 vim.opt.jumpoptions = "clean,stack,view"
 
