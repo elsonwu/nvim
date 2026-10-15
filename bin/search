@@ -1,0 +1,85 @@
+#!/bin/sh
+# Backend of the unified search picker (lua/search.lua). Runnable on its own:
+#
+#   bin/search [--no-ignore] [--changed] [--recent FILE] -- 'QUERY'
+#
+# QUERY is `TERMS -- SCOPE`, both halves optional:
+#   TERMS  matched against file paths AND file contents
+#   SCOPE  matched against file paths only; limits both kinds of match
+#   empty  prints FILE (recent files)
+#
+# Path matching is fzf --exact syntax, case-insensitive: space-separated
+# substrings that must all match, `!x` excludes, `^x` / `x$` anchor.
+# Content matching is an rg regex (smart-case).
+#
+# Output: file-name matches first (best 50, as bare paths), then content
+# matches as rg `path:line:col:text`.
+
+no_ignore='' changed='' recent=''
+while [ $# -gt 0 ]; do
+  case $1 in
+    --no-ignore) no_ignore=1 ;;
+    --changed) changed=1 ;;
+    --recent) recent=$2; shift ;;
+    --) shift; break ;;
+  esac
+  shift
+done
+query=${1-}
+
+# Split on the first ` -- `. A leading `-- ` means "scope only", and a trailing
+# ` --` (scope not typed yet) must not reach rg as part of the pattern.
+case $query in --|'-- '*) query=" $query" ;; esac
+case $query in
+  *' -- '*) terms=${query%% -- *} scope=${query#* -- } ;;
+  *' --') terms=${query% --} scope= ;;
+  *) terms=$query scope= ;;
+esac
+trim() { set -- "${1#"${1%%[! ]*}"}"; printf %s "${1%"${1##*[! ]}"}"; }
+terms=$(trim "$terms") scope=$(trim "$scope")
+
+if [ -z "$terms$scope" ]; then
+  [ -n "$recent" ] && [ -r "$recent" ] && cat "$recent"
+  exit 0
+fi
+
+list_files() {
+  if [ -n "$changed" ]; then
+    # vs HEAD plus untracked; deleted files have nothing to open or grep
+    { git diff --name-only --relative HEAD; git ls-files --others --exclude-standard; } 2>/dev/null |
+      sort -u | while IFS= read -r f; do [ -f "$f" ] && printf '%s\n' "$f"; done
+  elif [ -n "$no_ignore" ]; then
+    fd --type f --hidden --follow --no-ignore --exclude .git
+  else
+    fd --type f --hidden --follow --exclude .git --exclude node_modules \
+      --exclude target --exclude build --exclude dist
+  fi
+}
+match_paths() { fzf --filter "$1" --exact -i --scheme=path; }
+
+files=$(mktemp) || exit 1
+trap 'rm -f "$files"' EXIT
+if [ -n "$scope" ]; then list_files | match_paths "$scope"; else list_files; fi >"$files"
+
+if [ -z "$terms" ]; then
+  cat "$files"
+  exit 0
+fi
+
+match_paths "$terms" <"$files" | head -n 50
+
+rg_opts='--column --line-number --no-heading --with-filename --color=always --smart-case --max-count 300'
+if [ -z "$scope$changed" ]; then
+  # Whole tree: rg's own parallel walk is ~3x faster than being handed the
+  # list. Same exclusions as list_files.
+  excl='-g !.git'
+  [ -z "$no_ignore" ] && excl="$excl -g !node_modules -g !target -g !build -g !dist"
+  # shellcheck disable=SC2086
+  rg $rg_opts --hidden --follow ${no_ignore:+--no-ignore} $excl -e "$terms" 2>/dev/null
+else
+  # rg searches explicitly passed files even when binary and reports each as
+  # "binary file matches"; drop those lines.
+  # shellcheck disable=SC2086
+  tr '\n' '\0' <"$files" | xargs -0 -r rg $rg_opts -e "$terms" 2>/dev/null |
+    grep -v -F 'binary file matches (found'
+fi

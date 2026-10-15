@@ -32,131 +32,78 @@ A lightweight, performance-optimized Neovim configuration for **code review**. B
 
 ## Key Mappings
 
+### Search: `\\` (files, content, both)
+
+One picker for everything. The query is `name/text -- path`, both halves optional:
+
+| You type | You get |
+| --- | --- |
+| *(nothing)* | Recent files: open buffers by last use, then old files (cwd only) |
+| `ActionPanel` | Files whose path contains `ActionPanel` (best 50) first, then lines containing it |
+| `-- vmc .tsx$ !test` | Files only: path contains `vmc`, ends in `.tsx`, doesn't contain `test` |
+| `submit -- vmc .tsx$` | Same, restricted to those files: their names, then lines matching `submit` |
+
+- **Left of ` -- `** matches both file paths (substring, case-insensitive) and file
+  contents (rg regex, smart-case). It's a regex on the content side, so `.` means any
+  character; `\.` for a literal dot.
+- **Right of ` -- `** filters paths only, fzf `--exact` syntax: space-separated
+  substrings that must all match, `!x` excludes, `^x` starts with, `x$` ends with,
+  `a | b` either.
+
+| Key | Action |
+| ----- | -------- |
+| `\\` | Open search (visual mode: search the selection) |
+| `\sr` | Resume last search |
+| `/` (in explorer) | Search scoped to the focused node's directory |
+
+Inside the picker:
+
+- `alt-i` — toggle including gitignored files (prompt shows `+ignored`)
+- `alt-c` — toggle only files changed vs `HEAD`, plus untracked (prompt shows `changed`)
+- `Enter` open · `Ctrl-v` / `Ctrl-s` / `Ctrl-t` vsplit / split / tab
+- `Ctrl-d` / `Ctrl-u` — scroll preview
+- `Ctrl-q` — select all and send to quickfix
+
+The matching lives in `bin/search`, a plain shell script you can run on its own to see
+exactly what the picker gets: `~/.config/nvim/bin/search -- 'submit -- vmc .tsx$'`.
+
 ### Navigating Files
 
 | Key | Action |
 | ----- | -------- |
-| `\\` | Go to anything: files; prefix `$` buffers, `@` symbols in file, `#` workspace symbols |
 | `\wh` | Open explorer at the git root, revealing the current file (snacks) |
-| `\ff` | Find files under a directory (prompts first, with tab completion) |
-| `\sf` | Find files (respects .gitignore) |
-| `\SF` | Find ALL files (includes gitignored) |
-| `\sb` | Search open buffers |
-| `\so` | Recent files in the current directory |
 | `Ctrl-^` | Back to the previous file (native) |
 | `Ctrl-n` | Next buffer |
 | `Ctrl-p` | Previous buffer |
 | `\ww` | Close current buffer (preserves layout) |
 
-### Searching Code
-
-| Key | Action |
-| ----- | -------- |
-| `\ss` | Live grep (respects .gitignore) |
-| `\sS` | Live grep ALL (includes gitignored) |
-| `\sw` | Grep word under cursor (also works on a visual selection) |
-| `\sP` | Live grep scoped to a directory, scope stays editable (see below) |
-| `\sG` | Live grep only files changed vs `HEAD` |
-| `\sr` | Resume last search |
-
-Inside fzf-lua picker:
-
-- `Ctrl-d` / `Ctrl-u` — Scroll preview
-- `Ctrl-q` — Select all and send to quickfix
-- `Ctrl-g` — Toggle rg-regex mode ↔ fzf-fuzzy mode. **Regex only works in rg mode**; if a
-  pattern that should match suddenly stops matching, check you haven't toggled.
-
-#### Scoping a search: the ` -- ` glob syntax
-
-This is the equivalent of VSCode's "files to include/exclude" box. A live-grep query has
-two halves separated by ` -- `:
-
-```text
-ActionPanel -- *.tsx !**/test/**
-└─ rg regex ─┘ └──── path globs ────┘
-```
-
-The left half goes to ripgrep as a **regex** (`\bfoo\b`, `(a|b)`, `foo.*bar` all work; rg
-uses Rust regex, so no lookaround or backreferences without `-P`). Each whitespace-separated
-token on the right becomes an `--iglob` (case-insensitive), `!` negates.
-
-**Globs here are more forgiving than raw ripgrep**, via a custom `rg_glob_fn` in
-`lua/plugins/fzf-lua.lua`. Raw rg anchors a glob to the *entire basename* and ignores
-directory components unless the glob contains `/`, so bare `Virtual*` means "filename starts
-with Virtual" and silently matches nothing when you meant "path contains Virtual". A token
-without `/` is therefore rewritten to a substring match:
-
-| You type | Actual glob | Matches |
-| --- | --- | --- |
-| `Virtual` · `Virtual*` · `*Virtual` | `*Virtual*` | `VirtualCard.tsx`, `MyVirtualThing.tsx` |
-| `.tsx` | `*.tsx*` | any filename containing `.tsx` |
-| `!test` | `!*test*` | excludes filenames containing `test` |
-| `{ts,tsx}` | `*{ts,tsx}*` | brace expansion is preserved |
-| `**/api/**` | unchanged | files under any `api/` directory |
-| `**/*.tsx` | unchanged | strict extension match, no trailing `*` |
-
-**Escape hatch:** any token containing `/` is passed through verbatim. That is also how you
-get strict anchoring back when the substring rewrite is too loose — write `**/*.tsx`, not
-`*.tsx`.
-
-#### `\sP` — pick a directory, keep it editable
-
-`\sP` prompts for a directory (with tab completion, which fzf's query line does not have)
-and then pre-fills it as a glob rather than setting the picker's `cwd`:
-
-```text
-\sP → "Grep in dir: lua/plugins" → query becomes:   ▐ -- lua/plugins/**
-                                                   ↑ cursor lands here
-```
-
-The point of the glob over `cwd` is that `cwd` is fixed for the whole picker session, while
-the glob half stays editable — widen to `**/api/**` or drop the scope entirely without
-reopening. Three cases are handled differently:
-
-| Chosen directory | Behaviour |
-| --- | --- |
-| Below `cwd` | Pre-filled as `<rel>/**`, editable |
-| Equal to `cwd` | No glob at all (`fnamemodify(cwd, ":.")` returns `""`, and rg rejects `./**`) |
-| Outside `cwd` | Falls back to setting `cwd` — rg matches globs against cwd-relative paths, so a relative glob cannot reach it. Scope is fixed for that session |
-
-Two things that look incidental but are not:
-
-- The `/**` suffix is required. A bare `--iglob 'src/foo'` matches only the directory entry
-  itself and reports "No files were searched".
-- The cursor jump uses `keymap.fzf.start = "+beginning-of-line"`. The leading `+` **appends**
-  to fzf-lua's own `start:+transform:<reload_command>` bind (`core.lua:640`); fzf keeps only
-  the last `--bind` for an event, so dropping the `+` silently breaks live reloading.
-
-Since the keyword half starts empty, the first rg run has an empty pattern and matches every
-line in scope — expect a burst of results before your first keystroke narrows it.
-
-> **Gotcha:** when a glob matches zero files, `rg` exits 2 with "No files were searched" but
-> fzf-lua only shows an empty list. "Bad glob" and "genuinely no matches" look identical.
-
-The `rg_glob_fn` **must stay self-contained** — no upvalues, `require` everything inside the
-function body. `live_grep` forces `multiprocess = 1` and ships the function to a headless
-Neovim instance via `string.dump`, which drops upvalues. A version that captures a local
-from the enclosing file works in-process and fails only in the headless path, so it looks
-fine until you actually search.
-
 ### Understanding Code (LSP)
 
 | Key | Action |
 | ----- | -------- |
-| `gd` | Go to definition |
+| `gr` | Everything about the symbol under the cursor, whatever it is, in one list (below) |
 | `K` | Hover documentation |
-| `\h` | Peek definition (fzf-lua preview) |
-| `\gt` | Peek type definition |
-| `\gr` | Find all references (fzf-lua) |
-| `\sy` | Workspace symbols — jump to a class/function by name |
 | `Ctrl-o` / `Ctrl-i` | Jump back / forward, restoring the previous scroll position |
 | `\rn` | Rename symbol |
 | `\ca` | Code action |
-| `\ge` | Buffer diagnostics |
-| `\gE` | Workspace diagnostics |
 | `\sd` | Document diagnostics (fzf-lua) |
 | `\sD` | Workspace diagnostics (fzf-lua) |
 | `[d` / `]d` | Previous / next diagnostic |
+
+`gr` rows are labelled:
+
+| Label | Meaning |
+| --- | --- |
+| `def` | Where it's defined |
+| `impl` | Implementations (interface / abstract members) |
+| `ref` | Every place it's used |
+| `out` | Calls made from inside this function (empty for non-functions) |
+
+The line under the cursor is left out, and a line already listed under an earlier label
+isn't repeated (for a plain function the LSP reports its definition as its
+"implementation" too). Incoming calls aren't a separate label: every call site is
+already a `ref`.
+
 
 ### Jumping Within a File
 
@@ -195,9 +142,7 @@ fine until you actually search.
 | Key | Action |
 | ----- | -------- |
 | `n` | New file |
-| `f` | Find file |
-| `g` | Live grep |
-| `r` | Recent files |
+| `f` | Search (recent files when empty) |
 | `c` | Edit config |
 | `L` | Open Lazy plugin manager |
 | `q` | Quit |
@@ -234,9 +179,12 @@ fine until you actually search.
 ```
 ~/.config/nvim/
   init.lua                          -- Entry point: lazy.nvim bootstrap
+  bin/
+    search                          -- Unified search backend (query parsing + fd/fzf/rg)
   lua/
     settings.lua                    -- All vim options (single source of truth)
     keymappings.lua                 -- Global key mappings
+    search.lua                      -- Unified search picker (wraps bin/search)
     performance.lua                 -- Runtime performance optimizations
     startup-profile.lua             -- Startup timing
     plugins/
