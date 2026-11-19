@@ -24,7 +24,7 @@ A lightweight, performance-optimized Neovim configuration for **code review**. B
 
 ### LSP Servers (auto-installed via Mason)
 
-- **tsgo** — TypeScript/JavaScript (TypeScript 7 native preview)
+- **tsc** — TypeScript/JavaScript (TypeScript 7 native)
 - **jdtls** — Java (requires Java 21+)
 - **yamlls** — YAML
 - **lua_ls** — Lua
