@@ -19,8 +19,6 @@ A lightweight, performance-optimized Neovim configuration for **code review**. B
 | [lualine.nvim](https://github.com/nvim-lualine/lualine.nvim) | Statusline |
 | [dracula](https://github.com/Mofiqul/dracula.nvim) | Color scheme |
 | [nvim-web-devicons](https://github.com/nvim-tree/nvim-web-devicons) | File type icons |
-| [render-markdown.nvim](https://github.com/MeanderingProgrammer/render-markdown.nvim) | Render Markdown in the buffer; `gd` follows links |
-| [markdown-preview.nvim](https://github.com/iamcco/markdown-preview.nvim) | Browser preview, including Mermaid |
 
 ### LSP Servers (auto-installed via Mason)
 
@@ -191,12 +189,10 @@ already a `ref`.
       fzf-lua.lua                   -- Fuzzy finder
       gitsigns.lua                  -- Git integration
       lualine.lua                   -- Status line
-      markdown-preview.lua          -- Browser Markdown preview
       mason.lua                     -- LSP installer
       mason-lspconfig.lua           -- Mason + LSP bridge
       nvim-lspconfig.lua            -- LSP configuration
       nvim-treesitter.lua           -- Syntax highlighting
-      render-markdown.lua           -- In-buffer Markdown rendering
       snacks.lua                    -- Multi-module utility (explorer, dashboard, etc.)
 ```
 
